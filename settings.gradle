@@ -1,0 +1,2 @@
+rootProject.name = "Shows-ToniMatic"
+include ':app'
