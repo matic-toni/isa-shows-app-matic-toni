@@ -28,6 +28,8 @@ class WelcomeActivity : AppCompatActivity() {
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportActionBar?.hide()
+
         val username = intent.extras?.getString(EXTRA_EMAIL)
 
         val text = binding.welcomeText.text.toString() + username + "!"
