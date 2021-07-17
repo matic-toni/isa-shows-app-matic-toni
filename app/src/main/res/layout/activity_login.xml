@@ -81,9 +81,10 @@
         android:layout_marginStart="26dp"
         android:layout_marginEnd="26dp"
         android:layout_marginTop="15dp"
-
         android:textColorHint="@color/white"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxStrokeColor="@color/selector_input_box"
+        app:hintTextColor="@color/white"
         android:hint="Email" >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -109,6 +110,8 @@
         android:textColorHint="@color/white"
         app:boxBackgroundColor="#3D1D72"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxStrokeColor="@color/selector_input_box"
+        app:hintTextColor="@color/white"
         android:hint="Password" >
 
         <com.google.android.material.textfield.TextInputEditText
