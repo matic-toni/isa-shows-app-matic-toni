@@ -11,8 +11,7 @@ class ShowsAdapter(
     private val onClickCallback: (Show) -> Unit
 ) : RecyclerView.Adapter<ShowsAdapter.ShowViewHolder>() {
 
-
-    inner class ShowViewHolder(val binding: ViewShowItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ShowViewHolder(private val binding: ViewShowItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Show) {
             binding.showName.text = item.name
             binding.showDescription.text = item.description

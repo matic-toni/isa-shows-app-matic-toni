@@ -11,7 +11,7 @@ class ReviewsAdapter(
 ) : RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder>() {
 
 
-    inner class ReviewViewHolder(val binding: ViewReviewItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ReviewViewHolder(private val binding: ViewReviewItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Review) {
             binding.reviewName.text = item.name
             binding.reviewComment.text = item.comment

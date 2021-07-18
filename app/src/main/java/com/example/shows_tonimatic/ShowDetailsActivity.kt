@@ -56,7 +56,7 @@ class ShowDetailsActivity : AppCompatActivity() {
     }
 
     private fun initRecycleView() {
-        var currentShowReviews = updateRating()
+        val currentShowReviews = updateRating()
         binding.reviewRecycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         adapter = ReviewsAdapter(currentShowReviews)
         binding.reviewRecycler.adapter = adapter

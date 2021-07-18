@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.shows_tonimatic.databinding.ActivityShowsBinding
 import com.example.shows_tonimatic.model.Show
@@ -17,7 +16,6 @@ class ShowsActivity : AppCompatActivity() {
 
         fun buildIntent(activity: Activity, username: String) : Intent {
             val intent = Intent(activity, ShowsActivity::class.java)
-            Log.d("un", username)
             intent.putExtra("USERNAME", username)
             return intent
         }
