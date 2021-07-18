@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initLoginButton() {
         binding.loginButton.setOnClickListener {
-            val intent =  ShowsActivity.buildIntent(this)
+            val intent =  ShowsActivity.buildIntent(this, binding.emailEdit.editText?.text.toString().split("@").toTypedArray()[0])
             startActivity(intent)
         }
     }

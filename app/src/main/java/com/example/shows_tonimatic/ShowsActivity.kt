@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.shows_tonimatic.databinding.ActivityShowsBinding
 import com.example.shows_tonimatic.model.Show
@@ -14,8 +15,10 @@ class ShowsActivity : AppCompatActivity() {
 
     companion object {
 
-        fun buildIntent(activity: Activity) : Intent {
+        fun buildIntent(activity: Activity, username: String) : Intent {
             val intent = Intent(activity, ShowsActivity::class.java)
+            Log.d("un", username)
+            intent.putExtra("USERNAME", username)
             return intent
         }
 
@@ -41,7 +44,7 @@ class ShowsActivity : AppCompatActivity() {
         binding.showsRecycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         binding.showsRecycler.adapter = ShowsAdapter(shows) { item ->
-            val intent =  ShowDetailsActivity.buildIntent(this, item)
+            val intent =  ShowDetailsActivity.buildIntent(this, item, intent.extras?.getString("USERNAME").toString())
             startActivity(intent)
         }
     }

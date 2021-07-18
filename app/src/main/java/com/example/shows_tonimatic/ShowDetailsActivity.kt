@@ -19,8 +19,9 @@ class ShowDetailsActivity : AppCompatActivity() {
 
     companion object {
 
-        fun buildIntent(activity: Activity, item: Show): Intent {
+        fun buildIntent(activity: Activity, item: Show, username: String): Intent {
             val intent = Intent(activity, ShowDetailsActivity::class.java)
+            intent.putExtra("USERNAME", username)
             intent.putExtra("ID", item.id)
             intent.putExtra("NAME", item.name)
             intent.putExtra("DESCRIPTION", item.description)
@@ -90,7 +91,7 @@ class ShowDetailsActivity : AppCompatActivity() {
 
         dialogBinding.submitButton.setOnClickListener {
             // reviews += Review("the_office", "ja", dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder)
-            adapter?.addItem(Review("the_office", "ja", dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
+            adapter?.addItem(Review("the_office", extras?.getString("USERNAME").toString(), dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
             dialog.dismiss()
             // updateRating()
         }
