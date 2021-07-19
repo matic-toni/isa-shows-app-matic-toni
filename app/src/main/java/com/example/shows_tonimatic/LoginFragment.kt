@@ -3,36 +3,40 @@ package com.example.shows_tonimatic
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
-import com.example.shows_tonimatic.databinding.ActivityLoginBinding
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.shows_tonimatic.databinding.FragmentLoginBinding
 import com.google.android.material.textfield.TextInputLayout
 
-class LoginActivity : AppCompatActivity() {
+class LoginFragment : Fragment() {
 
     companion object {
         const val MIN_PASS_LENGTH = 6
     }
 
-    private lateinit var binding : ActivityLoginBinding
+    private lateinit var binding : FragmentLoginBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        supportActionBar?.hide()
-
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
+        val view = binding.root
         initEmailAndPassword(binding.emailEdit)
         initEmailAndPassword(binding.passwordEdit)
-        initLoginButton()
+        return view
     }
 
-    private fun initLoginButton() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.loginButton.setOnClickListener {
-            val intent =  ShowsActivity.buildIntent(this, binding.emailEdit.editText?.text.toString().split("@").toTypedArray()[0])
-            startActivity(intent)
+            val action = LoginFragmentDirections.actionLoginToShows(binding.emailEdit.editText?.text.toString().split("@").toTypedArray()[0])
+            findNavController().navigate(action)
         }
     }
 

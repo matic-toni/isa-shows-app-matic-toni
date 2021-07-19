@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ShowDetailsActivity">
+    tools:context=".ShowDetailsFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -19,12 +19,21 @@
             android:orientation="vertical"
             android:stretchColumns="1">
 
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/back" />
+
             <TextView
                 android:id="@+id/showName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="72dp"
+                android:layout_marginTop="30dp"
                 android:fontFamily="@font/roboto"
+                android:layout_marginStart="15dp"
                 android:textSize="28sp"
                 tools:text="The Office" />
 

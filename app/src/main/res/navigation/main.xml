@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.shows_tonimatic.LoginFragment"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_login_to_shows"
+            app:destination="@id/showsFragment"
+            app:popUpTo="@id/showsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/showsFragment"
+        android:name="com.example.shows_tonimatic.ShowsFragment"
+        tools:layout="@layout/fragment_shows">
+
+        <argument
+            android:name="username"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_shows_to_show_details"
+            app:destination="@id/showDetailsFragment"
+            app:popUpTo="@id/showDetailsFragment" />
+
+        <action
+            android:id="@+id/action_shows_to_login"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/showDetailsFragment"
+        android:name="com.example.shows_tonimatic.ShowDetailsFragment"
+        tools:layout="@layout/fragment_show_details">
+
+        <argument
+            android:name="username"
+            app:argType="string" />
+
+        <argument
+            android:name="show_id"
+            app:argType="string" />
+
+        <argument
+            android:name="show_name"
+            app:argType="string" />
+
+        <argument
+            android:name="show_description"
+            app:argType="string" />
+
+        <argument
+            android:name="show_picture"
+            app:argType="reference" />
+
+        <action
+            android:id="@+id/action_show_details_to_shows"
+            app:destination="@id/showsFragment"
+            app:popUpTo="@id/showsFragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+</navigation>
