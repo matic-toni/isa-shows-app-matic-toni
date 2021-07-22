@@ -92,9 +92,9 @@ class ShowDetailsFragment : Fragment() {
         dialog?.setContentView(dialogBinding.root)
 
         dialogBinding.submitButton.setOnClickListener {
-            reviews.add(Review("the_office", args.username, dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
+            reviews.add(Review(args.showId, args.username, dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
             updateRating()
-            adapter?.addItem(Review("the_office", args.username, dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
+            adapter?.addItem(Review(args.showId, args.username, dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
             dialog?.dismiss()
         }
         dialog?.show()
