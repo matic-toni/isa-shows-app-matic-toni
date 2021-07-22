@@ -66,14 +66,24 @@
                 android:textSize="24sp"
                 android:text="Reviews" />
 
+            <TextView
+                android:id="@+id/reviewsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="3 reviews, 3.63 average"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="16dp" />
+
             <RatingBar
                 android:id="@+id/showRating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
                 android:isIndicator="true"
                 android:numStars="5"
                 tools:rating="5"
+                android:progressTint="@color/purple_500"
                 android:stepSize="0.1" />
 
             <androidx.recyclerview.widget.RecyclerView

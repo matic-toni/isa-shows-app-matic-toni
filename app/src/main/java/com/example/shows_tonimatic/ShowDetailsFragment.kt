@@ -20,7 +20,7 @@ class ShowDetailsFragment : Fragment() {
     private val args: ShowDetailsFragmentArgs by navArgs()
 
     companion object {
-        private var reviews = listOf(
+        private var reviews = mutableListOf<Review>(
             Review("the_office", "ime.prezimenkovic", "The show was great!", 5, R.drawable.ic_profile_placeholder),
             Review("the_office", "netko.drugi", "The show was ok", 4, R.drawable.ic_profile_placeholder),
             Review("krv_nije_voda", "ime.prezimenkovic", "Best show ever! The masterpiece! Awesome!", 5, R.drawable.ic_profile_placeholder)
@@ -58,6 +58,7 @@ class ShowDetailsFragment : Fragment() {
         var sumOfRates = 0.0f
         var numOfRates = 0.0f
 
+
         reviews.forEach {
             if (it.showId == args.showId) {
                 currentShowReviews += it
@@ -65,7 +66,17 @@ class ShowDetailsFragment : Fragment() {
                 numOfRates++
             }
         }
-        binding.showRating.rating = sumOfRates / numOfRates
+
+        var res = 0.0f
+
+        if(numOfRates != 0.0f) {
+            res = sumOfRates / numOfRates
+        }
+
+        res = String.format("%.2f", res).toFloat()
+
+        binding.showRating.rating = res
+        binding.reviewsText.text = (numOfRates.toInt()).toString().plus(" REVIEWS, ").plus(res).plus(" AVERAGE")
         return currentShowReviews
     }
 
@@ -81,8 +92,8 @@ class ShowDetailsFragment : Fragment() {
         dialog?.setContentView(dialogBinding.root)
 
         dialogBinding.submitButton.setOnClickListener {
-            // reviews += Review("the_office", "ja", dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder)
-            // updateRating()
+            reviews.add(Review("the_office", "ja", dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
+            updateRating()
             adapter?.addItem(Review("the_office", args.username, dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
             dialog?.dismiss()
         }
@@ -91,7 +102,6 @@ class ShowDetailsFragment : Fragment() {
 
     private fun initBackButton() {
         binding.backButton.setOnClickListener {
-            // val action = ShowDetailsFragmentDirections.actionShowDetailsToShows(args.username)
             findNavController().navigateUp()
         }
     }

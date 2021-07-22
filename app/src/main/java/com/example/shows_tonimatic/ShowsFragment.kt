@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -34,6 +35,7 @@ class ShowsFragment : Fragment() {
         val view = binding.root
         initRecycleView()
         initLogoutButton()
+        initEmptyStateButton()
         return view
     }
 
@@ -50,6 +52,20 @@ class ShowsFragment : Fragment() {
         binding.logoutButton.setOnClickListener {
             val action = ShowsFragmentDirections.actionShowsToLogin()
             findNavController().navigate(action)
+        }
+    }
+
+    private fun initEmptyStateButton() {
+        binding.emptyStateButton.setOnClickListener {
+            if(binding.showsRecycler.isVisible) {
+                binding.showsRecycler.isVisible = false
+                binding.emptyStateImage.isVisible = true
+                binding.emptyStateText.isVisible = true
+            } else {
+                binding.showsRecycler.isVisible = true
+                binding.emptyStateImage.isVisible = false
+                binding.emptyStateText.isVisible = false
+            }
         }
     }
 }
