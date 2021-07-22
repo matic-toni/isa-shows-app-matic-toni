@@ -91,8 +91,8 @@ class ShowDetailsFragment : Fragment() {
 
     private fun initBackButton() {
         binding.backButton.setOnClickListener {
-            val action = ShowDetailsFragmentDirections.actionShowDetailsToShows(args.username)
-            findNavController().navigate(action)
+            // val action = ShowDetailsFragmentDirections.actionShowDetailsToShows(args.username)
+            findNavController().navigateUp()
         }
     }
 }

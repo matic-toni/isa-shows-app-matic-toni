@@ -10,7 +10,6 @@
         android:id="@+id/loginFragment"
         android:name="com.example.shows_tonimatic.LoginFragment"
         tools:layout="@layout/fragment_login">
-
         <action
             android:id="@+id/action_login_to_shows"
             app:destination="@id/showsFragment"
@@ -63,12 +62,6 @@
         <argument
             android:name="show_picture"
             app:argType="reference" />
-
-        <action
-            android:id="@+id/action_show_details_to_shows"
-            app:destination="@id/showsFragment"
-            app:popUpTo="@id/showsFragment"
-            app:popUpToInclusive="true" />
 
     </fragment>
 </navigation>
