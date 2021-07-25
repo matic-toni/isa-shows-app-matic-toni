@@ -1,30 +1,35 @@
 package com.example.shows_tonimatic
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.example.shows_tonimatic.adapter.ShowsAdapter
+import com.example.shows_tonimatic.databinding.DialogProfileBinding
 import com.example.shows_tonimatic.databinding.FragmentShowsBinding
 import com.example.shows_tonimatic.model.Show
+import com.example.shows_tonimatic.viewmodel.ShowsViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class ShowsFragment : Fragment() {
 
     private lateinit var binding : FragmentShowsBinding
-
     private val args: ShowsFragmentArgs by navArgs()
-
-    companion object {
-        private val shows = listOf(
-            Show("the_office", "The Office", R.drawable.ic_the_office),
-            Show("stranger_things", "Stranger Things", R.drawable.ic_stranger_things),
-            Show("krv_nije_voda", "Krv Nije Voda", R.drawable.ic_krv_nije_voda)
-        )
-    }
+    private val viewModel : ShowsViewModel by viewModels()
+    private val cameraPermissionContract = preparePermissionsContract(onPermissionsGranted = {
+        openCamera()
+    })
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,13 +38,19 @@ class ShowsFragment : Fragment() {
     ): View {
         binding = FragmentShowsBinding.inflate(layoutInflater)
         val view = binding.root
-        initRecycleView()
-        initLogoutButton()
+
+        viewModel.getShowsLiveData().observe(viewLifecycleOwner, {shows ->
+            initRecycleView(shows)
+        })
+
+        viewModel.initShows()
+
         initEmptyStateButton()
+        initProfilePictureButton()
         return view
     }
 
-    private fun initRecycleView() {
+    private fun initRecycleView(shows: List<Show>) {
         binding.showsRecycler.layoutManager = LinearLayoutManager(view?.context, LinearLayoutManager.VERTICAL, false)
 
         binding.showsRecycler.adapter = ShowsAdapter(shows) {
@@ -48,10 +59,9 @@ class ShowsFragment : Fragment() {
         }
     }
 
-    private fun initLogoutButton() {
-        binding.logoutButton.setOnClickListener {
-            val action = ShowsFragmentDirections.actionShowsToLogin()
-            findNavController().navigate(action)
+    private fun initProfilePictureButton() {
+        binding.profilePictureButton.setOnClickListener {
+            showProfileDialog()
         }
     }
 
@@ -68,4 +78,53 @@ class ShowsFragment : Fragment() {
             }
         }
     }
+
+    private fun showProfileDialog() {
+        val dialog = view?.let { BottomSheetDialog(it.context) }
+        val dialogBinding = DialogProfileBinding.inflate(layoutInflater)
+
+        dialogBinding.profilePicture.setImageResource(R.drawable.ic_profile_placeholder)
+        dialogBinding.email.text = args.username
+
+        dialog?.setContentView(dialogBinding.root)
+
+        dialogBinding.logout.setOnClickListener {
+
+            val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+            if (prefs != null) {
+                with (prefs.edit()) {
+                    putBoolean(LoginFragment.REMEMBER_ME, false)
+                    apply()
+                }
+            }
+
+            val action = ShowsFragmentDirections.actionShowsToLogin()
+            findNavController().navigate(action)
+            dialog?.dismiss()
+        }
+
+        dialogBinding.changeProfilePicture.setOnClickListener {
+            cameraPermissionContract.launch(arrayOf(Manifest.permission.CAMERA))
+        }
+        dialog?.show()
+    }
+
+    private fun openCamera() {
+        var file = FileUtil.getImageFile(context)
+        if (file == null) {
+            file = context?.let { it1 -> FileUtil.createImageFile(it1) }
+        }
+
+        if (file != null) {
+            val avatarUri = context?.let { it1 -> FileProvider.getUriForFile(it1, it1.applicationContext.packageName.toString() + ".fileprovider", file) }
+            val intent = Intent("android.media.action.IMAGE_CAPTURE", avatarUri)
+            startActivity(intent)
+
+            val dialogBinding = DialogProfileBinding.inflate(layoutInflater)
+            Glide.with(this).load(avatarUri).into(dialogBinding.profilePicture)
+        }
+    }
 }
+
+
+//activity.onBackPressed()

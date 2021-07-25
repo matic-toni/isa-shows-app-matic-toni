@@ -5,12 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.shows_tonimatic.adapter.ReviewsAdapter
 import com.example.shows_tonimatic.databinding.FragmentShowDetailsBinding
 import com.example.shows_tonimatic.databinding.DialogWriteReviewBinding
 import com.example.shows_tonimatic.model.Review
+import com.example.shows_tonimatic.viewmodel.ShowDetailsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class ShowDetailsFragment : Fragment() {
@@ -18,14 +21,7 @@ class ShowDetailsFragment : Fragment() {
     private lateinit var binding : FragmentShowDetailsBinding
     private var adapter: ReviewsAdapter? = null
     private val args: ShowDetailsFragmentArgs by navArgs()
-
-    companion object {
-        private var reviews = mutableListOf<Review>(
-            Review("the_office", "ime.prezimenkovic", "The show was great!", 5, R.drawable.ic_profile_placeholder),
-            Review("the_office", "netko.drugi", "The show was ok", 4, R.drawable.ic_profile_placeholder),
-            Review("krv_nije_voda", "ime.prezimenkovic", "Best show ever! The masterpiece! Awesome!", 5, R.drawable.ic_profile_placeholder)
-        )
-    }
+    private val viewModel : ShowDetailsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,21 +35,26 @@ class ShowDetailsFragment : Fragment() {
         binding.showDescription.text = args.showDescription
         binding.showImage.setImageResource(args.showPicture)
 
+        viewModel.initShowDetails()
+
+        viewModel.getShowDetailsLiveData().observe(viewLifecycleOwner, {reviews ->
+            initRecyclerView(reviews)
+            initReviewButton(reviews)
+        })
+
         initBackButton()
-        initRecycleView()
-        initReviewButton()
 
         return view
     }
 
-    private fun initRecycleView() {
-        val currentShowReviews = updateRating()
+    private fun initRecyclerView(reviews: List<Review>) {
+        val currentShowReviews = updateRating(reviews)
         binding.reviewRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         adapter = ReviewsAdapter(currentShowReviews)
         binding.reviewRecycler.adapter = adapter
     }
 
-    private fun updateRating(): MutableList<Review> {
+    private fun updateRating(reviews: List<Review>): List<Review> {
         val currentShowReviews = mutableListOf<Review>()
         var sumOfRates = 0.0f
         var numOfRates = 0.0f
@@ -67,34 +68,33 @@ class ShowDetailsFragment : Fragment() {
             }
         }
 
-        var res = 0.0f
+        var quotient = 0.0f
 
         if(numOfRates != 0.0f) {
-            res = sumOfRates / numOfRates
+            quotient = sumOfRates / numOfRates
         }
 
-        res = String.format("%.2f", res).toFloat()
+        val res = String.format("%.2f", quotient)
 
-        binding.showRating.rating = res
+        binding.showRating.rating = quotient
         binding.reviewsText.text = (numOfRates.toInt()).toString().plus(" REVIEWS, ").plus(res).plus(" AVERAGE")
         return currentShowReviews
     }
 
-    private fun initReviewButton() {
+    private fun initReviewButton(reviews: List<Review>) {
         binding.reviewButton.setOnClickListener {
-            showReviewDialog()
+            showReviewDialog(reviews)
         }
     }
 
-    private fun showReviewDialog() {
+    private fun showReviewDialog(reviews: List<Review>) {
         val dialog = view?.let { BottomSheetDialog(it.context) }
         val dialogBinding = DialogWriteReviewBinding.inflate(layoutInflater)
         dialog?.setContentView(dialogBinding.root)
 
         dialogBinding.submitButton.setOnClickListener {
-            reviews.add(Review("the_office", "ja", dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
-            updateRating()
-            adapter?.addItem(Review("the_office", args.username, dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
+            viewModel.addReview(Review(args.showId, args.username, dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
+            updateRating(reviews)
             dialog?.dismiss()
         }
         dialog?.show()

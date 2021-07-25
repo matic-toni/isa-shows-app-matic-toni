@@ -64,7 +64,7 @@
                 android:layout_marginTop="25dp"
                 android:fontFamily="@font/roboto"
                 android:textSize="24sp"
-                android:text="Reviews" />
+                android:text="@string/reviews" />
 
             <TextView
                 android:id="@+id/reviewsText"
@@ -103,7 +103,7 @@
                 android:textColor="@color/white"
                 app:cornerRadius="30dp"
                 android:textAllCaps="false"
-                android:text = "Write a review"/>
+                android:text = "@string/write_a_review"/>
 
         </LinearLayout>
     </ScrollView>
