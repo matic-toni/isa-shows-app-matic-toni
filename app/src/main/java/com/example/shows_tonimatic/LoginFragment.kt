@@ -32,6 +32,7 @@ class LoginFragment : Fragment() {
         val view = binding.root
         initEmailAndPassword(binding.emailEdit)
         initEmailAndPassword(binding.passwordEdit)
+
         return view
     }
 
@@ -69,6 +70,13 @@ class LoginFragment : Fragment() {
         inputLayout.editText?.addTextChangedListener {
             val email = emailEdit?.text.toString()
             val password = passwordEdit?.text.toString()
+            val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+            if (prefs != null) {
+                with (prefs.edit()) {
+                    putString("email", email)
+                    apply()
+                }
+            }
 
             if (email.isEmpty() || password.length < MIN_PASS_LENGTH) {
                 binding.loginButton.isEnabled = false
