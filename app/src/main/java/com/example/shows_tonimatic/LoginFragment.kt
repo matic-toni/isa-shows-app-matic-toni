@@ -87,6 +87,17 @@ class LoginFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+        if (prefs != null) {
+            with (prefs.edit()) {
+                putBoolean(REGISTRATION_SUCCESSFUL, false)
+                apply()
+            }
+        }
+    }
+
     private fun navigateToShows() {
         val action = LoginFragmentDirections.actionLoginToShows(binding.emailEdit.editText?.text.toString().split("@").toTypedArray()[0])
         findNavController().navigate(action)

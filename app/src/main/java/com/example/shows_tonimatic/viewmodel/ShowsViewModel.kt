@@ -10,8 +10,6 @@ import com.example.shows_tonimatic.networking.ApiModule
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlinx.serialization.*
-import kotlinx.serialization.json.Json
 
 class ShowsViewModel : ViewModel() {
 

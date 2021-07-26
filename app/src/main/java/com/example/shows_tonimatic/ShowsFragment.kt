@@ -2,12 +2,13 @@ package com.example.shows_tonimatic
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.shows_tonimatic.adapter.ShowsAdapter
 import com.example.shows_tonimatic.databinding.DialogProfileBinding
 import com.example.shows_tonimatic.databinding.FragmentShowsBinding
@@ -31,6 +33,19 @@ class ShowsFragment : Fragment() {
     private val cameraPermissionContract = preparePermissionsContract(onPermissionsGranted = {
         openCamera()
     })
+
+    private var avatarUri: Uri? = null
+
+    private val cameraContract = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
+        if (isSuccess) {
+            FileUtil.getImageFile(context)?.let {
+                Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(binding.profilePictureButton)
+                Toast.makeText(context, "Picture changed", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,7 +115,11 @@ class ShowsFragment : Fragment() {
         val dialog = view?.let { BottomSheetDialog(it.context) }
         val dialogBinding = DialogProfileBinding.inflate(layoutInflater)
 
-        dialogBinding.profilePicture.setImageResource(R.drawable.ic_profile_placeholder)
+        if (avatarUri == null) {
+            dialogBinding.profilePicture.setImageResource(R.drawable.ic_profile_placeholder)
+        } else {
+            Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(dialogBinding.profilePicture)
+        }
         dialogBinding.email.text = args.username
 
         dialog?.setContentView(dialogBinding.root)
@@ -122,23 +141,16 @@ class ShowsFragment : Fragment() {
 
         dialogBinding.changeProfilePicture.setOnClickListener {
             cameraPermissionContract.launch(arrayOf(Manifest.permission.CAMERA))
+            dialog?.dismiss()
         }
         dialog?.show()
     }
 
+
     private fun openCamera() {
-        var file = FileUtil.getImageFile(context)
-        if (file == null) {
-            file = context?.let { it1 -> FileUtil.createImageFile(it1) }
-        }
+        val file = FileUtil.createImageFile(requireContext())
 
-        if (file != null) {
-            val avatarUri = context?.let { it1 -> FileProvider.getUriForFile(it1, it1.applicationContext.packageName.toString() + ".fileprovider", file) }
-            val intent = Intent("android.media.action.IMAGE_CAPTURE", avatarUri)
-            startActivity(intent)
-
-            val dialogBinding = DialogProfileBinding.inflate(layoutInflater)
-            Glide.with(this).load(avatarUri).into(dialogBinding.profilePicture)
-        }
+        avatarUri = FileProvider.getUriForFile(requireContext(), context?.applicationContext?.packageName.toString() + ".fileprovider", file!!)
+        cameraContract.launch(avatarUri)
     }
 }
