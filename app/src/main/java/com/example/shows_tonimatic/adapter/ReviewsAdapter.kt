@@ -1,8 +1,12 @@
 package com.example.shows_tonimatic.adapter
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.example.shows_tonimatic.R
 import com.example.shows_tonimatic.databinding.ViewReviewItemBinding
 import com.example.shows_tonimatic.model.Review
 
@@ -13,10 +17,14 @@ class ReviewsAdapter(
 
     inner class ReviewViewHolder(private val binding: ViewReviewItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Review) {
-            binding.reviewName.text = item.name
+            binding.reviewName.text = item.user.email
             binding.reviewComment.text = item.comment
-            binding.reviewProfilePicture.setImageResource(item.imageResourceId)
-            binding.reviewRate.text = item.rate.toString()
+            Glide.with(itemView)
+                .load(Uri.parse(item.user.imageUrl.toString()))
+                .apply(RequestOptions.placeholderOf(R.drawable.ic_profile_placeholder))
+                .centerCrop()
+                .into(binding.reviewProfilePicture)
+            binding.reviewRate.text = item.rating.toString()
         }
     }
 

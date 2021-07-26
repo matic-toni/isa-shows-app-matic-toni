@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -39,11 +40,15 @@ class ShowsFragment : Fragment() {
         binding = FragmentShowsBinding.inflate(layoutInflater)
         val view = binding.root
 
-        viewModel.getShowsLiveData().observe(viewLifecycleOwner, {shows ->
-            initRecycleView(shows)
+        viewModel.getShowsLiveData().observe(viewLifecycleOwner, { response ->
+            if (response.shows.isNotEmpty()) {
+                initRecycleView(response.shows)
+            } else {
+                Toast.makeText(context, "There are no shows", Toast.LENGTH_LONG).show()
+            }
         })
 
-        viewModel.initShows()
+        viewModel.getShows()
 
         initEmptyStateButton()
         initProfilePictureButton()
@@ -54,7 +59,19 @@ class ShowsFragment : Fragment() {
         binding.showsRecycler.layoutManager = LinearLayoutManager(view?.context, LinearLayoutManager.VERTICAL, false)
 
         binding.showsRecycler.adapter = ShowsAdapter(shows) {
-            val action = ShowsFragmentDirections.actionShowsToShowDetails(args.username, it.id, it.name, it.description, it.imageResourceId)
+            val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+            if (prefs != null) {
+                with (prefs.edit()) {
+                    putString("id", it.id)
+                    putString("title", it.title)
+                    putString("description", it.description)
+                    putInt("no of reviews", it.noOfReviews)
+                    putInt("average rating", it.averageRating ?: 0)
+                    putString("image url", it.imageUrl)
+                    apply()
+                }
+            }
+            val action = ShowsFragmentDirections.actionShowsToShowDetails()
             findNavController().navigate(action)
         }
     }
@@ -125,6 +142,3 @@ class ShowsFragment : Fragment() {
         }
     }
 }
-
-
-//activity.onBackPressed()

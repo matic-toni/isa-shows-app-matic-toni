@@ -1,10 +1,13 @@
 package com.example.shows_tonimatic.adapter
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.shows_tonimatic.databinding.ViewShowItemBinding
 import com.example.shows_tonimatic.model.Show
+
 
 class ShowsAdapter(
     private var items: List<Show>,
@@ -13,10 +16,14 @@ class ShowsAdapter(
 
     inner class ShowViewHolder(private val binding: ViewShowItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Show) {
-            binding.showName.text = item.name
+            binding.showName.text = item.title
             binding.showDescription.text = item.description
-            binding.showImage.setImageResource(item.imageResourceId)
+
+            Glide.with(itemView).load(Uri.parse(item.imageUrl)).centerCrop().into(binding.showImage)
+
+            // binding.showImage.setImageURI(Uri.parse(item.imageUrl))
             binding.root.setOnClickListener {
+
                 onClickCallback(item)
             }
         }

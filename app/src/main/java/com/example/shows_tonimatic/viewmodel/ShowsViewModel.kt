@@ -1,28 +1,42 @@
 package com.example.shows_tonimatic.viewmodel
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.shows_tonimatic.R
-import com.example.shows_tonimatic.model.Show
+import com.example.shows_tonimatic.model.*
+import com.example.shows_tonimatic.networking.ApiModule
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
 
 class ShowsViewModel : ViewModel() {
 
-    private val shows = mutableListOf(
-        Show("the_office", "The Office", R.drawable.ic_the_office),
-        Show("stranger_things", "Stranger Things", R.drawable.ic_stranger_things),
-        Show("krv_nije_voda", "Krv Nije Voda", R.drawable.ic_krv_nije_voda)
-    )
-
-    private val showsLiveData: MutableLiveData<List<Show>> by lazy {
-        MutableLiveData<List<Show>>()
+    private val showsLiveData: MutableLiveData<ShowsResponse> by lazy {
+        MutableLiveData<ShowsResponse>()
     }
 
-    fun getShowsLiveData(): LiveData<List<Show>> {
+    fun getShowsLiveData(): LiveData<ShowsResponse> {
         return showsLiveData
     }
 
-    fun initShows() {
-        showsLiveData.value = shows
+    fun getShows() {
+        ApiModule.retrofit.getShows().enqueue(object :
+            Callback<ShowsResponse> {
+            override fun onResponse(
+                call: Call<ShowsResponse>,
+                response: Response<ShowsResponse>
+            ) {
+                showsLiveData.value = response.body()
+            }
+
+            override fun onFailure(call: Call<ShowsResponse>, t: Throwable) {
+                Log.d("greska:", t.message.toString())
+                showsLiveData.value = ShowsResponse(emptyList(), Meta(Pagination(0, 0, 0, 0)))
+            }
+        })
     }
 }

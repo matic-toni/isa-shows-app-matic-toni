@@ -1,18 +1,23 @@
 package com.example.shows_tonimatic
 
+import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.shows_tonimatic.adapter.ReviewsAdapter
 import com.example.shows_tonimatic.databinding.FragmentShowDetailsBinding
 import com.example.shows_tonimatic.databinding.DialogWriteReviewBinding
 import com.example.shows_tonimatic.model.Review
+import com.example.shows_tonimatic.model.User
+import com.example.shows_tonimatic.networking.ApiModule
 import com.example.shows_tonimatic.viewmodel.ShowDetailsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
@@ -20,7 +25,6 @@ class ShowDetailsFragment : Fragment() {
 
     private lateinit var binding : FragmentShowDetailsBinding
     private var adapter: ReviewsAdapter? = null
-    private val args: ShowDetailsFragmentArgs by navArgs()
     private val viewModel : ShowDetailsViewModel by viewModels()
 
     override fun onCreateView(
@@ -31,54 +35,44 @@ class ShowDetailsFragment : Fragment() {
         binding = FragmentShowDetailsBinding.inflate(layoutInflater)
         val view = binding.root
 
-        binding.showName.text = args.showName
-        binding.showDescription.text = args.showDescription
-        binding.showImage.setImageResource(args.showPicture)
+        viewModel.getReviewsLiveData().observe(viewLifecycleOwner, { response ->
+            if (response.reviews.isNotEmpty()) {
+                initRecyclerView(response.reviews)
+                initReviewButton(response.reviews)
+            }
 
-        viewModel.initShowDetails()
-
-        viewModel.getShowDetailsLiveData().observe(viewLifecycleOwner, {reviews ->
-            initRecyclerView(reviews)
-            initReviewButton(reviews)
         })
 
+        viewModel.getPutReviewResultLiveData().observe(viewLifecycleOwner, { result ->
+            if (result) {
+                Toast.makeText(context, "Review posted!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Review posted failed!", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+
+        val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+
+        binding.showName.text = prefs?.getString("title", "")
+        binding.showDescription.text = prefs?.getString("description", "")
+        binding.showRating.rating = prefs?.getInt("average rating", 0)?.toFloat() ?: 0.0f
+        binding.reviewsText.text = prefs?.getInt("no of reviews", 0).toString().plus(" reviews, " + prefs?.getInt("average rating", 0) + " average")
+        Glide.with(this).load(Uri.parse(prefs?.getString("image url", ""))).into(binding.showImage)
+
         initBackButton()
+
+        if (prefs != null) {
+            viewModel.getReviews(prefs.getString("id", "")!!.toInt())
+        }
 
         return view
     }
 
     private fun initRecyclerView(reviews: List<Review>) {
-        val currentShowReviews = updateRating(reviews)
         binding.reviewRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        adapter = ReviewsAdapter(currentShowReviews)
+        adapter = ReviewsAdapter(reviews)
         binding.reviewRecycler.adapter = adapter
-    }
-
-    private fun updateRating(reviews: List<Review>): List<Review> {
-        val currentShowReviews = mutableListOf<Review>()
-        var sumOfRates = 0.0f
-        var numOfRates = 0.0f
-
-
-        reviews.forEach {
-            if (it.showId == args.showId) {
-                currentShowReviews += it
-                sumOfRates += it.rate
-                numOfRates++
-            }
-        }
-
-        var quotient = 0.0f
-
-        if(numOfRates != 0.0f) {
-            quotient = sumOfRates / numOfRates
-        }
-
-        val res = String.format("%.2f", quotient)
-
-        binding.showRating.rating = quotient
-        binding.reviewsText.text = (numOfRates.toInt()).toString().plus(" REVIEWS, ").plus(res).plus(" AVERAGE")
-        return currentShowReviews
     }
 
     private fun initReviewButton(reviews: List<Review>) {
@@ -92,10 +86,22 @@ class ShowDetailsFragment : Fragment() {
         val dialogBinding = DialogWriteReviewBinding.inflate(layoutInflater)
         dialog?.setContentView(dialogBinding.root)
 
+        val prefs = ApiModule.prefs
         dialogBinding.submitButton.setOnClickListener {
-            viewModel.addReview(Review(args.showId, args.username, dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
-            updateRating(reviews)
+            adapter?.addItem(
+                Review(
+                    "rev1",
+                    dialogBinding.reviewComment.text.toString(),
+                    dialogBinding.reviewRate.rating.toInt(),
+                    reviews[0].showId,
+                    User(prefs.getInt("user id", 0), prefs.getString("user email", "")!!, prefs.getString("user image", ""))))
             dialog?.dismiss()
+
+            viewModel.putReview(
+                dialogBinding.reviewRate.rating.toInt(),
+                dialogBinding.reviewComment.text.toString(),
+                reviews[0].showId
+            )
         }
         dialog?.show()
     }
