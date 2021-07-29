@@ -1,11 +1,9 @@
 package com.example.shows_tonimatic.networking
 
 import com.example.shows_tonimatic.model.*
+import okhttp3.MultipartBody
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface ShowsApiService {
     @POST("/users")
@@ -22,4 +20,11 @@ interface ShowsApiService {
 
     @POST("/reviews")
     fun postReview(@Body request: ReviewRequest): Call<ReviewResponse>
+
+    @Multipart
+    @PUT("/users")
+    fun postImage(@Part image: MultipartBody.Part): Call<LoginResponse>
+
+    @GET("/users/me")
+    fun getMe(): Call<LoginResponse>
 }

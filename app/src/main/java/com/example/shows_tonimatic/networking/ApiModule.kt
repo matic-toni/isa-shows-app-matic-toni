@@ -17,35 +17,26 @@ object ApiModule {
 
     fun initRetrofit(preferences: SharedPreferences) {
         prefs = preferences
-        lateinit var okhttp: OkHttpClient
 
-        if (prefs.getString("access-token", "") != "") {
-           okhttp = OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                })
-                .addInterceptor(
-                    Interceptor {
-                            chain ->
-                        val builder = chain.request().newBuilder()
-                        builder.header("Accept", "application/json")
-                        builder.header("access-token", prefs.getString("access-token", "")!!)
-                        builder.header("client", prefs.getString("client", "")!!)
-                        builder.header("token-type", prefs.getString("token-type", "")!!)
-                        builder.header("expiry", prefs.getString("expiry", "")!!)
-                        builder.header("uid", prefs.getString("uid", "")!!)
-                        builder.header("Content-Type", prefs.getString("content-type", "")!!)
-                        return@Interceptor chain.proceed(builder.build())
-                    }
-                )
-                .build()
-        } else {
-            okhttp = OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                })
-                .build()
-        }
+        val okhttp = OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .addInterceptor(
+                Interceptor {
+                        chain ->
+                    val builder = chain.request().newBuilder()
+                    builder.header("Accept", "application/json")
+                    builder.header("access-token", prefs.getString("access-token", "")!!)
+                    builder.header("client", prefs.getString("client", "")!!)
+                    builder.header("token-type", prefs.getString("token-type", "")!!)
+                    builder.header("expiry", prefs.getString("expiry", "")!!)
+                    builder.header("uid", prefs.getString("uid", "")!!)
+                    builder.header("Content-Type", prefs.getString("content-type", "")!!)
+                    return@Interceptor chain.proceed(builder.build())
+                }
+            )
+            .build()
 
         retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)

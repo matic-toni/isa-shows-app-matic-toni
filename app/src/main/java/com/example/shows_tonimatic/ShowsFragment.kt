@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,8 +23,15 @@ import com.example.shows_tonimatic.adapter.ShowsAdapter
 import com.example.shows_tonimatic.databinding.DialogProfileBinding
 import com.example.shows_tonimatic.databinding.FragmentShowsBinding
 import com.example.shows_tonimatic.model.Show
+import com.example.shows_tonimatic.networking.ShowsApiService
 import com.example.shows_tonimatic.viewmodel.ShowsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
 class ShowsFragment : Fragment() {
 
@@ -35,12 +43,14 @@ class ShowsFragment : Fragment() {
     })
 
     private var avatarUri: Uri? = null
+    private lateinit var file: File
+    private var email: String? = null
 
     private val cameraContract = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
         if (isSuccess) {
             FileUtil.getImageFile(context)?.let {
-                Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(binding.profilePictureButton)
                 Toast.makeText(context, "Picture changed", Toast.LENGTH_SHORT).show()
+                uploadImage()
             }
         } else {
             Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
@@ -55,6 +65,18 @@ class ShowsFragment : Fragment() {
         binding = FragmentShowsBinding.inflate(layoutInflater)
         val view = binding.root
 
+        viewModel.getMeResultLiveData().observe(viewLifecycleOwner, { response ->
+            if (response.user.imageUrl != "") {
+                avatarUri = response.user.imageUrl?.toUri()
+                Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(binding.profilePictureButton)
+                email = response.user.email
+            } else {
+                Toast.makeText(context, "Picture posting failed!", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        viewModel.getMe()
+
         viewModel.getShowsLiveData().observe(viewLifecycleOwner, { response ->
             if (response.shows.isNotEmpty()) {
                 initRecycleView(response.shows)
@@ -67,6 +89,19 @@ class ShowsFragment : Fragment() {
 
         initEmptyStateButton()
         initProfilePictureButton()
+
+        viewModel.getPostImageResultLiveData().observe(viewLifecycleOwner, { response ->
+            if (response.user.imageUrl != "") {
+                // val dialogBinding = DialogProfileBinding.inflate(layoutInflater)
+                avatarUri = response.user.imageUrl?.toUri()
+
+                Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(binding.profilePictureButton)
+                //Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(dialogBinding.profilePicture)
+            } else {
+                Toast.makeText(context, "Geting data failed!", Toast.LENGTH_SHORT).show()
+            }
+        })
+
         return view
     }
 
@@ -86,6 +121,7 @@ class ShowsFragment : Fragment() {
                     apply()
                 }
             }
+            
             val action = ShowsFragmentDirections.actionShowsToShowDetails()
             findNavController().navigate(action)
         }
@@ -120,7 +156,7 @@ class ShowsFragment : Fragment() {
         } else {
             Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(dialogBinding.profilePicture)
         }
-        dialogBinding.email.text = args.username
+        dialogBinding.email.text = email
 
         dialog?.setContentView(dialogBinding.root)
 
@@ -148,9 +184,16 @@ class ShowsFragment : Fragment() {
 
 
     private fun openCamera() {
-        val file = FileUtil.createImageFile(requireContext())
+        file = FileUtil.createImageFile(requireContext())!!
 
         avatarUri = FileProvider.getUriForFile(requireContext(), context?.applicationContext?.packageName.toString() + ".fileprovider", file!!)
         cameraContract.launch(avatarUri)
+    }
+
+    private fun uploadImage() {
+        val requestFile: RequestBody = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val body: MultipartBody.Part = MultipartBody.Part.createFormData("image", file.name.trim(), requestFile)
+
+        viewModel.postImage(body)
     }
 }
