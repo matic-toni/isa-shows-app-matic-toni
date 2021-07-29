@@ -1,6 +1,5 @@
 package com.example.shows_tonimatic.viewmodel
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -64,12 +63,12 @@ class ShowsViewModel : ViewModel() {
         })
     }
 
-    private val getMeResultLiveData: MutableLiveData<LoginResponse> by lazy {
+    private val meResultLiveData: MutableLiveData<LoginResponse> by lazy {
         MutableLiveData<LoginResponse>()
     }
 
     fun getMeResultLiveData(): LiveData<LoginResponse> {
-        return getMeResultLiveData
+        return meResultLiveData
     }
 
     fun getMe() {
@@ -79,12 +78,12 @@ class ShowsViewModel : ViewModel() {
                 call: Call<LoginResponse>,
                 response: Response<LoginResponse>
             ) {
-                postImageResultLiveData.value = response.body()
+                meResultLiveData.value = response.body()
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Log.d("Error:", t.message.toString())
-                postImageResultLiveData.value = LoginResponse(User(0, "", ""))
+                meResultLiveData.value = LoginResponse(User(0, "", ""))
             }
         })
     }

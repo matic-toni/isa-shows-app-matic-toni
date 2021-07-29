@@ -28,10 +28,6 @@
         android:name="com.example.shows_tonimatic.ShowsFragment"
         tools:layout="@layout/fragment_shows">
 
-        <argument
-            android:name="username"
-            app:argType="string" />
-
         <action
             android:id="@+id/action_shows_to_show_details"
             app:destination="@id/showDetailsFragment"

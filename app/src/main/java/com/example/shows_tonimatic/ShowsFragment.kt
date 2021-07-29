@@ -15,7 +15,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -23,10 +22,8 @@ import com.example.shows_tonimatic.adapter.ShowsAdapter
 import com.example.shows_tonimatic.databinding.DialogProfileBinding
 import com.example.shows_tonimatic.databinding.FragmentShowsBinding
 import com.example.shows_tonimatic.model.Show
-import com.example.shows_tonimatic.networking.ShowsApiService
 import com.example.shows_tonimatic.viewmodel.ShowsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -36,7 +33,6 @@ import java.io.File
 class ShowsFragment : Fragment() {
 
     private lateinit var binding : FragmentShowsBinding
-    private val args: ShowsFragmentArgs by navArgs()
     private val viewModel : ShowsViewModel by viewModels()
     private val cameraPermissionContract = preparePermissionsContract(onPermissionsGranted = {
         openCamera()
@@ -44,7 +40,7 @@ class ShowsFragment : Fragment() {
 
     private var avatarUri: Uri? = null
     private lateinit var file: File
-    private var email: String? = null
+    private var userEmail: String? = null
 
     private val cameraContract = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
         if (isSuccess) {
@@ -69,7 +65,7 @@ class ShowsFragment : Fragment() {
             if (response.user.imageUrl != "") {
                 avatarUri = response.user.imageUrl?.toUri()
                 Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(binding.profilePictureButton)
-                email = response.user.email
+                userEmail = response.user.email
             } else {
                 Toast.makeText(context, "Picture posting failed!", Toast.LENGTH_SHORT).show()
             }
@@ -92,11 +88,8 @@ class ShowsFragment : Fragment() {
 
         viewModel.getPostImageResultLiveData().observe(viewLifecycleOwner, { response ->
             if (response.user.imageUrl != "") {
-                // val dialogBinding = DialogProfileBinding.inflate(layoutInflater)
                 avatarUri = response.user.imageUrl?.toUri()
-
                 Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(binding.profilePictureButton)
-                //Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(dialogBinding.profilePicture)
             } else {
                 Toast.makeText(context, "Geting data failed!", Toast.LENGTH_SHORT).show()
             }
@@ -109,19 +102,6 @@ class ShowsFragment : Fragment() {
         binding.showsRecycler.layoutManager = LinearLayoutManager(view?.context, LinearLayoutManager.VERTICAL, false)
 
         binding.showsRecycler.adapter = ShowsAdapter(shows) {
-            val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
-            if (prefs != null) {
-                with (prefs.edit()) {
-                    putString("id", it.id)
-                    putString("title", it.title)
-                    putString("description", it.description)
-                    putInt("no of reviews", it.noOfReviews)
-                    putInt("average rating", it.averageRating ?: 0)
-                    putString("image url", it.imageUrl)
-                    apply()
-                }
-            }
-            
             val action = ShowsFragmentDirections.actionShowsToShowDetails()
             findNavController().navigate(action)
         }
@@ -156,7 +136,8 @@ class ShowsFragment : Fragment() {
         } else {
             Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(dialogBinding.profilePicture)
         }
-        dialogBinding.email.text = email
+
+        dialogBinding.email.text = userEmail
 
         dialog?.setContentView(dialogBinding.root)
 

@@ -43,7 +43,20 @@ class ShowDetailsFragment : Fragment() {
 
         })
 
-        viewModel.getPutReviewResultLiveData().observe(viewLifecycleOwner, { result ->
+        val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+        viewModel.getShowLiveData().observe(viewLifecycleOwner, { response ->
+            if (response != null) {
+                binding.showName.text = response.show.title
+                binding.showDescription.text = response.show.description
+                binding.showRating.rating = response.show.averageRating?.toFloat()!!
+                binding.reviewsText.text = response.show.noOfReviews.toString().plus(" reviews, " + response.show.averageRating.toFloat() + " average")
+                Glide.with(this).load(response.show.imageUrl).into(binding.showImage)
+            }
+        })
+
+        viewModel.getShow(prefs?.getString("id", "")!!.toInt())
+
+        viewModel.getPostReviewResultLiveData().observe(viewLifecycleOwner, { result ->
             if (result) {
                 Toast.makeText(context, "Review posted!", Toast.LENGTH_SHORT).show()
             } else {
@@ -51,20 +64,9 @@ class ShowDetailsFragment : Fragment() {
             }
         })
 
-
-        val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
-
-        binding.showName.text = prefs?.getString("title", "")
-        binding.showDescription.text = prefs?.getString("description", "")
-        binding.showRating.rating = prefs?.getInt("average rating", 0)?.toFloat() ?: 0.0f
-        binding.reviewsText.text = prefs?.getInt("no of reviews", 0).toString().plus(" reviews, " + prefs?.getInt("average rating", 0) + " average")
-        Glide.with(this).load(Uri.parse(prefs?.getString("image url", ""))).into(binding.showImage)
-
         initBackButton()
 
-        if (prefs != null) {
-            viewModel.getReviews(prefs.getString("id", "")!!.toInt())
-        }
+        viewModel.getReviews(prefs.getString("id", "")!!.toInt())
 
         return view
     }
@@ -97,7 +99,7 @@ class ShowDetailsFragment : Fragment() {
                     User(prefs.getInt("user id", 0), prefs.getString("user email", "")!!, prefs.getString("user image", ""))))
             dialog?.dismiss()
 
-            viewModel.putReview(
+            viewModel.postReview(
                 dialogBinding.reviewRate.rating.toInt(),
                 dialogBinding.reviewComment.text.toString(),
                 reviews[0].showId

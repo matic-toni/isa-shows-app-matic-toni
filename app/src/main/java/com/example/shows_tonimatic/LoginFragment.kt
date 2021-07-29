@@ -48,18 +48,23 @@ class LoginFragment : Fragment() {
 
         viewModel.getLoginResultLiveData().observe(this.viewLifecycleOwner) { isLoginSuccessful ->
             if (isLoginSuccessful) {
+                val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+                if (prefs != null) {
+                    with (prefs.edit()) {
+                        putBoolean(REMEMBER_ME, binding.rememberMe.isChecked)
+                        apply()
+                    }
+                }
+
                 navigateToShows()
             } else {
                 Toast.makeText(context, "Login failed!", Toast.LENGTH_SHORT).show()
             }
         }
 
-        setPrefs()
-
-
         val prefs = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
 
-        val clickedRememberMe = prefs.getBoolean( REMEMBER_ME,false)
+        val clickedRememberMe = prefs.getBoolean(REMEMBER_ME,false)
         val registrationSuccessful = prefs.getBoolean(REGISTRATION_SUCCESSFUL, false)
 
         if (registrationSuccessful) {
@@ -75,18 +80,6 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun setPrefs() {
-        binding.loginButton.setOnClickListener {
-            val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
-            if (prefs != null) {
-                with (prefs.edit()) {
-                    putBoolean(REMEMBER_ME, binding.rememberMe.isChecked)
-                    apply()
-                }
-            }
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
@@ -99,7 +92,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun navigateToShows() {
-        val action = LoginFragmentDirections.actionLoginToShows(binding.emailEdit.editText?.text.toString().split("@").toTypedArray()[0])
+        val action = LoginFragmentDirections.actionLoginToShows()
         findNavController().navigate(action)
     }
 
