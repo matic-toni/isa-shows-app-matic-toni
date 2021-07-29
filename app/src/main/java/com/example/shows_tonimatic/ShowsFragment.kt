@@ -2,6 +2,7 @@ package com.example.shows_tonimatic
 
 import android.Manifest
 import android.content.Context
+import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
@@ -91,7 +93,9 @@ class ShowsFragment : Fragment() {
                 avatarUri = response.user.imageUrl?.toUri()
                 Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(binding.profilePictureButton)
             } else {
-                Toast.makeText(context, "Geting data failed!", Toast.LENGTH_SHORT).show()
+                binding.showsRecycler.isVisible = false
+                binding.emptyStateImage.isVisible = true
+                binding.emptyStateText.isVisible = true
             }
         })
 
@@ -142,18 +146,33 @@ class ShowsFragment : Fragment() {
         dialog?.setContentView(dialogBinding.root)
 
         dialogBinding.logout.setOnClickListener {
+            val builder = AlertDialog.Builder(requireContext())
 
-            val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
-            if (prefs != null) {
-                with (prefs.edit()) {
-                    putBoolean(LoginFragment.REMEMBER_ME, false)
-                    apply()
+            builder.setTitle("Logout")
+            builder.setMessage("Are you sure you want to log out?")
+
+            val dialogClickListener = DialogInterface.OnClickListener{ _, which ->
+                when(which){
+                    DialogInterface.BUTTON_POSITIVE -> {
+                        val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+                        if (prefs != null) {
+                            with (prefs.edit()) {
+                                putBoolean(LoginFragment.REMEMBER_ME, false)
+                                apply()
+                            }
+                        }
+                        val action = ShowsFragmentDirections.actionShowsToLogin()
+                        findNavController().navigate(action)
+                        dialog?.dismiss()
+                    }
                 }
             }
 
-            val action = ShowsFragmentDirections.actionShowsToLogin()
-            findNavController().navigate(action)
-            dialog?.dismiss()
+            builder.setPositiveButton("YES",dialogClickListener)
+            builder.setNegativeButton("NO",dialogClickListener)
+
+            val dialogAlert = builder.create()
+            dialogAlert.show()
         }
 
         dialogBinding.changeProfilePicture.setOnClickListener {
