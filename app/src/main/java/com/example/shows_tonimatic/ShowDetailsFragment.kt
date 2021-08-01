@@ -1,7 +1,7 @@
 package com.example.shows_tonimatic
 
 import android.content.Context
-import android.net.Uri
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,13 +19,16 @@ import com.example.shows_tonimatic.model.Review
 import com.example.shows_tonimatic.model.User
 import com.example.shows_tonimatic.networking.ApiModule
 import com.example.shows_tonimatic.viewmodel.ShowDetailsViewModel
+import com.example.shows_tonimatic.viewmodel.ShowDetailsViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class ShowDetailsFragment : Fragment() {
 
     private lateinit var binding : FragmentShowDetailsBinding
     private var adapter: ReviewsAdapter? = null
-    private val viewModel : ShowDetailsViewModel by viewModels()
+    private val viewModel : ShowDetailsViewModel by viewModels {
+        ShowDetailsViewModelFactory((activity?.application as ShowsApp).showsDatabase)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,38 +38,60 @@ class ShowDetailsFragment : Fragment() {
         binding = FragmentShowDetailsBinding.inflate(layoutInflater)
         val view = binding.root
 
-        viewModel.getReviewsLiveData().observe(viewLifecycleOwner, { response ->
-            if (response.reviews.isNotEmpty()) {
-                initRecyclerView(response.reviews)
-                initReviewButton(response.reviews)
-            }
-
-        })
-
         val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
-        viewModel.getShowLiveData().observe(viewLifecycleOwner, { response ->
-            if (response != null) {
-                binding.showName.text = response.show.title
-                binding.showDescription.text = response.show.description
-                binding.showRating.rating = response.show.averageRating?.toFloat()!!
-                binding.reviewsText.text = response.show.noOfReviews.toString().plus(" reviews, " + response.show.averageRating.toFloat() + " average")
-                Glide.with(this).load(response.show.imageUrl).into(binding.showImage)
-            }
-        })
 
-        viewModel.getShow(prefs?.getString("id", "")!!.toInt())
+        if (isNetworkAvailable()) {
+            viewModel.getShowLiveData().observe(viewLifecycleOwner, { response ->
+                if (response != null) {
+                    binding.showName.text = response.show.title
+                    binding.showDescription.text = response.show.description
+                    binding.showRating.rating = response.show.averageRating?.toFloat()!!
+                    binding.reviewsText.text = response.show.noOfReviews.toString()
+                        .plus(" reviews, " + response.show.averageRating.toFloat() + " average")
+                    Glide.with(this).load(response.show.imageUrl).into(binding.showImage)
+                }
+            })
+
+            viewModel.getShow(prefs?.getString("id", "")!!.toInt())
+        } else {
+            viewModel.getOneShow(prefs?.getString("id", "")!!).observe(viewLifecycleOwner, { response ->
+                if (response != null) {
+                    binding.showName.text = response.title
+                    binding.showDescription.text = response.description
+                    binding.showRating.rating = response.averageRating?.toFloat()!!
+                    binding.reviewsText.text = response.noOfReviews.toString()
+                        .plus(" reviews, " + response.averageRating.toFloat() + " average")
+                    Glide.with(this).load(response.imageUrl).into(binding.showImage)
+                }
+            })
+        }
 
         viewModel.getPostReviewResultLiveData().observe(viewLifecycleOwner, { result ->
-            if (result) {
-                Toast.makeText(context, "Review posted!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, "Review posted failed!", Toast.LENGTH_SHORT).show()
+            if (result.review.id != "") {
+                viewModel.storeReview(result.review)
             }
         })
 
-        initBackButton()
+        if (isNetworkAvailable()) {
+            viewModel.getReviewsLiveData().observe(viewLifecycleOwner, { response ->
+                if (response.reviews.isNotEmpty()) {
+                    initRecyclerView(response.reviews)
+                    initReviewButton(response.reviews)
+                    viewModel.storeReviews(response.reviews)
+                }
+            })
 
-        viewModel.getReviews(prefs.getString("id", "")!!.toInt())
+            viewModel.getReviews(prefs.getString("id", "")!!.toInt())
+        } else {
+            viewModel.getReviewsForShow(prefs.getString("id", "")!!.toInt()).observe(viewLifecycleOwner, { result ->
+                if (result.isNotEmpty()) {
+                    initRecyclerView(result.map {Review(it.id, it.comment, it.rating, it.showId, User(0, it.userEmail, ""))})
+                    initReviewButton(result.map {Review(it.id, it.comment, it.rating, it.showId, User(0, it.userEmail, ""))})
+                }
+            })
+        }
+
+        initBackButton()
 
         return view
     }
@@ -112,5 +137,11 @@ class ShowDetailsFragment : Fragment() {
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val conManager = activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val internetInfo = conManager.getNetworkCapabilities(conManager.activeNetwork)
+        return internetInfo != null
     }
 }

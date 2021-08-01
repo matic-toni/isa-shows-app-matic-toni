@@ -33,16 +33,6 @@
         android:layout_marginTop="120dp"
         tools:listitem="@layout/view_show_item" />
 
-    <Button
-        android:id="@+id/emptyStateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="23dp"
-        android:text="@string/empty_state" />
-
     <ImageView
         android:id="@+id/emptyStateImage"
         android:layout_width="128dp"

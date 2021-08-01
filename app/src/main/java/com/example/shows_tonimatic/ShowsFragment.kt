@@ -3,6 +3,7 @@ package com.example.shows_tonimatic
 import android.Manifest
 import android.content.Context
 import android.content.DialogInterface
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,6 +25,7 @@ import com.example.shows_tonimatic.adapter.ShowsAdapter
 import com.example.shows_tonimatic.databinding.DialogProfileBinding
 import com.example.shows_tonimatic.databinding.FragmentShowsBinding
 import com.example.shows_tonimatic.model.Show
+import com.example.shows_tonimatic.viewmodel.ShowViewModelFactory
 import com.example.shows_tonimatic.viewmodel.ShowsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -35,7 +37,9 @@ import java.io.File
 class ShowsFragment : Fragment() {
 
     private lateinit var binding : FragmentShowsBinding
-    private val viewModel : ShowsViewModel by viewModels()
+    private val viewModel : ShowsViewModel by viewModels {
+        ShowViewModelFactory((activity?.application as ShowsApp).showsDatabase)
+    }
     private val cameraPermissionContract = preparePermissionsContract(onPermissionsGranted = {
         openCamera()
     })
@@ -68,24 +72,37 @@ class ShowsFragment : Fragment() {
                 avatarUri = response.user.imageUrl?.toUri()
                 Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(binding.profilePictureButton)
                 userEmail = response.user.email
-            } else {
-                Toast.makeText(context, "Picture posting failed!", Toast.LENGTH_SHORT).show()
             }
         })
 
         viewModel.getMe()
 
-        viewModel.getShowsLiveData().observe(viewLifecycleOwner, { response ->
-            if (response.shows.isNotEmpty()) {
-                initRecycleView(response.shows)
-            } else {
-                Toast.makeText(context, "There are no shows", Toast.LENGTH_LONG).show()
-            }
-        })
+        if (isNetworkAvailable()) {
+            viewModel.getShowsLiveData().observe(viewLifecycleOwner, { response ->
+                if (response.shows.isNotEmpty()) {
+                    viewModel.storeShows(response.shows)
+                    initRecycleView(response.shows)
+                } else {
+                    binding.showsRecycler.isVisible = false
+                    binding.emptyStateImage.isVisible = true
+                    binding.emptyStateText.isVisible = true
+                }
+            })
 
-        viewModel.getShows()
+            viewModel.getShows()
+        } else {
+            viewModel.getAllShows().observe(viewLifecycleOwner, { response ->
+                if (response.isNotEmpty()) {
+                    initRecycleView(response.map {Show(it.id, it.averageRating, it.description, it.imageUrl, it.noOfReviews, it.title)})
+                } else {
+                    binding.showsRecycler.isVisible = false
+                    binding.emptyStateImage.isVisible = true
+                    binding.emptyStateText.isVisible = true
+                }
+            })
+            Toast.makeText(context, "Check the internet connection!", Toast.LENGTH_LONG).show()
+        }
 
-        initEmptyStateButton()
         initProfilePictureButton()
 
         viewModel.getPostImageResultLiveData().observe(viewLifecycleOwner, { response ->
@@ -93,9 +110,7 @@ class ShowsFragment : Fragment() {
                 avatarUri = response.user.imageUrl?.toUri()
                 Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(binding.profilePictureButton)
             } else {
-                binding.showsRecycler.isVisible = false
-                binding.emptyStateImage.isVisible = true
-                binding.emptyStateText.isVisible = true
+                Toast.makeText(context, "Can't post image to server!", Toast.LENGTH_LONG).show()
             }
         })
 
@@ -105,7 +120,14 @@ class ShowsFragment : Fragment() {
     private fun initRecycleView(shows: List<Show>) {
         binding.showsRecycler.layoutManager = LinearLayoutManager(view?.context, LinearLayoutManager.VERTICAL, false)
 
+        val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
         binding.showsRecycler.adapter = ShowsAdapter(shows) {
+            if (prefs != null) {
+                with (prefs.edit()) {
+                    putString("id", it.id)
+                    apply()
+                }
+            }
             val action = ShowsFragmentDirections.actionShowsToShowDetails()
             findNavController().navigate(action)
         }
@@ -114,20 +136,6 @@ class ShowsFragment : Fragment() {
     private fun initProfilePictureButton() {
         binding.profilePictureButton.setOnClickListener {
             showProfileDialog()
-        }
-    }
-
-    private fun initEmptyStateButton() {
-        binding.emptyStateButton.setOnClickListener {
-            if(binding.showsRecycler.isVisible) {
-                binding.showsRecycler.isVisible = false
-                binding.emptyStateImage.isVisible = true
-                binding.emptyStateText.isVisible = true
-            } else {
-                binding.showsRecycler.isVisible = true
-                binding.emptyStateImage.isVisible = false
-                binding.emptyStateText.isVisible = false
-            }
         }
     }
 
@@ -186,7 +194,7 @@ class ShowsFragment : Fragment() {
     private fun openCamera() {
         file = FileUtil.createImageFile(requireContext())!!
 
-        avatarUri = FileProvider.getUriForFile(requireContext(), context?.applicationContext?.packageName.toString() + ".fileprovider", file!!)
+        avatarUri = FileProvider.getUriForFile(requireContext(), context?.applicationContext?.packageName.toString() + ".fileprovider", file)
         cameraContract.launch(avatarUri)
     }
 
@@ -195,5 +203,11 @@ class ShowsFragment : Fragment() {
         val body: MultipartBody.Part = MultipartBody.Part.createFormData("image", file.name.trim(), requestFile)
 
         viewModel.postImage(body)
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val conManager = activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val internetInfo = conManager.getNetworkCapabilities(conManager.activeNetwork)
+        return internetInfo != null
     }
 }
