@@ -89,6 +89,16 @@
                 android:layout_marginTop="20dp"
                 tools:listitem="@layout/view_review_item" />
 
+            <TextView
+                android:id="@+id/reviewsEmptyState"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:visibility="invisible"
+                android:fontFamily="@font/roboto"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/no_reviews_available" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/reviewButton"
                 android:layout_width="match_parent"

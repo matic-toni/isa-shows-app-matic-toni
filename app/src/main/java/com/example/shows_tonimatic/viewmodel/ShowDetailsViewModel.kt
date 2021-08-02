@@ -101,13 +101,13 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
 
     fun storeReviews(reviews: List<Review>) {
         Executors.newSingleThreadExecutor().execute {
-            database.reviewDao().insertReviews(reviews.map {ReviewEntity(it.id, it.comment, it.rating, it.showId, it.user.email)})
+            database.reviewDao().insertReviews(reviews.map {ReviewEntity(it.id, it.comment, it.rating, it.showId, it.user)})
         }
     }
 
     fun storeReview(review: Review) {
         Executors.newSingleThreadExecutor().execute {
-            database.reviewDao().insertReview(ReviewEntity(review.id, review.comment, review.rating, review.showId, review.user.email))
+            database.reviewDao().insertReview(ReviewEntity(review.id, review.comment, review.rating, review.showId, review.user))
         }
     }
 }

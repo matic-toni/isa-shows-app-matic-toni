@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -78,6 +78,7 @@ class ShowDetailsFragment : Fragment() {
                     initRecyclerView(response.reviews)
                     initReviewButton(response.reviews)
                     viewModel.storeReviews(response.reviews)
+                    binding.reviewsEmptyState.isVisible = false
                 }
             })
 
@@ -85,8 +86,10 @@ class ShowDetailsFragment : Fragment() {
         } else {
             viewModel.getReviewsForShow(prefs.getString("id", "")!!.toInt()).observe(viewLifecycleOwner, { result ->
                 if (result.isNotEmpty()) {
-                    initRecyclerView(result.map {Review(it.id, it.comment, it.rating, it.showId, User(0, it.userEmail, ""))})
-                    initReviewButton(result.map {Review(it.id, it.comment, it.rating, it.showId, User(0, it.userEmail, ""))})
+                    initRecyclerView(result.map {Review(it.id, it.comment, it.rating, it.showId, it.user)})
+                    initReviewButton(result.map {Review(it.id, it.comment, it.rating, it.showId, it.user)})
+                } else {
+                    binding.reviewsEmptyState.isVisible = true
                 }
             })
         }
