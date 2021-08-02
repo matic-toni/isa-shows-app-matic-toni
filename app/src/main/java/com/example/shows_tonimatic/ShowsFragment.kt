@@ -68,8 +68,6 @@ class ShowsFragment : Fragment() {
                 avatarUri = response.user.imageUrl?.toUri()
                 Glide.with(this).load(avatarUri).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(binding.profilePictureButton)
                 userEmail = response.user.email
-            } else {
-                Toast.makeText(context, "Picture posting failed!", Toast.LENGTH_SHORT).show()
             }
         })
 
