@@ -8,8 +8,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
@@ -87,6 +87,7 @@ class ShowsFragment : Fragment() {
 
         initEmptyStateButton()
         initProfilePictureButton()
+
 
         viewModel.getPostImageResultLiveData().observe(viewLifecycleOwner, { response ->
             if (response.user.imageUrl != "") {
@@ -186,7 +187,7 @@ class ShowsFragment : Fragment() {
     private fun openCamera() {
         file = FileUtil.createImageFile(requireContext())!!
 
-        avatarUri = FileProvider.getUriForFile(requireContext(), context?.applicationContext?.packageName.toString() + ".fileprovider", file!!)
+        avatarUri = FileProvider.getUriForFile(requireContext(), context?.applicationContext?.packageName.toString() + ".fileprovider", file)
         cameraContract.launch(avatarUri)
     }
 
