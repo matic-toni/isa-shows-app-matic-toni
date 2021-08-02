@@ -8,7 +8,7 @@ import com.example.shows_tonimatic.model.User
 
 @Entity(tableName = "review")
 data class ReviewEntity(
-    @PrimaryKey @ColumnInfo(name = "reviewId") val id: String,
+    @PrimaryKey @ColumnInfo(name = "review_id") val id: String,
     @ColumnInfo(name = "comment") val comment: String,
     @ColumnInfo(name = "rating") val rating: Int,
     @ColumnInfo(name = "show_id") val showId: Int,

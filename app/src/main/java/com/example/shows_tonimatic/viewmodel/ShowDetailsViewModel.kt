@@ -114,4 +114,10 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
             database.reviewDao().insertReview(ReviewEntity(review.id, review.comment, review.rating, review.showId, review.user))
         }
     }
+
+    fun deleteReview(id: String) {
+        Executors.newSingleThreadExecutor().execute {
+            database.reviewDao().deleteRewiev(id)
+        }
+    }
 }

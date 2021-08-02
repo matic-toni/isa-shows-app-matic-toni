@@ -42,11 +42,10 @@ class ShowDetailsFragment : Fragment() {
         val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
 
         if (isNetworkAvailable()) {
-
-            viewModel.getOneReview("").observe(viewLifecycleOwner, { response ->
+            viewModel.getOneReview("to post").observe(viewLifecycleOwner, { response ->
                 if (response != null) {
-                    Toast.makeText(context, "postam stari post", Toast.LENGTH_LONG).show()
                     viewModel.postReview(response.rating, response.comment, response.showId)
+                    viewModel.deleteReview("to post")
                 }
             })
 
@@ -75,11 +74,11 @@ class ShowDetailsFragment : Fragment() {
             })
         }
 
-//        viewModel.getPostReviewResultLiveData().observe(viewLifecycleOwner, { result ->
-//            if (result.review.id != "") {
-//                viewModel.storeReview(result.review)
-//            }
-//        })
+        viewModel.getPostReviewResultLiveData().observe(viewLifecycleOwner, { result ->
+            if (result.review.id != "") {
+                viewModel.storeReview(result.review)
+            }
+        })
 
         if (isNetworkAvailable()) {
             viewModel.getReviewsLiveData().observe(viewLifecycleOwner, { response ->
@@ -146,7 +145,7 @@ class ShowDetailsFragment : Fragment() {
                 )
             } else {
                 viewModel.storeReview(Review(
-                    "",
+                    "to post",
                     dialogBinding.reviewComment.text.toString(),
                     dialogBinding.reviewRate.rating.toInt(),
                     prefs.getString("id", "")!!.toInt(),
