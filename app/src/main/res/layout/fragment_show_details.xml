@@ -29,7 +29,7 @@
                 android:id="@+id/showName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="32dp"
                 android:fontFamily="@font/roboto"
                 android:layout_marginStart="15dp"
                 android:textSize="28sp"
@@ -38,8 +38,9 @@
             <ImageView
                 android:id="@+id/showImage"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="500dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="32dp"
                 tools:src="@drawable/ic_the_office" />
 
             <TextView
@@ -47,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="15dp"
                 android:fontFamily="@font/roboto"
                 android:lines="3"
@@ -95,10 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:layout_marginBottom="30dp"
-                android:fontFamily="@font/roboto"
-                android:textColor="@color/white"
-                app:cornerRadius="30dp"
-                android:textAllCaps="false"
+                style="@style/buttonStyle"
                 android:text = "@string/write_a_review"/>
 
         </LinearLayout>

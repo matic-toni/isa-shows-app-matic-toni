@@ -49,7 +49,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="24dp"
         android:layout_marginHorizontal="24dp"
-        android:text="@string/submit"
-        app:cornerRadius="40dp"/>
+        style="@style/buttonStyle"
+        android:text="@string/submit"/>
 
 </LinearLayout>
