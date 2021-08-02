@@ -95,6 +95,10 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
         return database.showDao().getShow(id)
     }
 
+    fun getOneReview(id: String): LiveData<ReviewEntity> {
+        return database.reviewDao().getReview(id)
+    }
+
     fun getReviewsForShow(id: Int): LiveData<List<ReviewEntity>> {
         return database.reviewDao().getReviews(id)
     }

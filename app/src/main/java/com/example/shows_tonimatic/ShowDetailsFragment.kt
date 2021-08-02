@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -41,6 +42,14 @@ class ShowDetailsFragment : Fragment() {
         val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
 
         if (isNetworkAvailable()) {
+
+            viewModel.getOneReview("").observe(viewLifecycleOwner, { response ->
+                if (response != null) {
+                    Toast.makeText(context, "postam stari post", Toast.LENGTH_LONG).show()
+                    viewModel.postReview(response.rating, response.comment, response.showId)
+                }
+            })
+
             viewModel.getShowLiveData().observe(viewLifecycleOwner, { response ->
                 if (response != null) {
                     binding.showName.text = response.show.title
@@ -66,11 +75,11 @@ class ShowDetailsFragment : Fragment() {
             })
         }
 
-        viewModel.getPostReviewResultLiveData().observe(viewLifecycleOwner, { result ->
-            if (result.review.id != "") {
-                viewModel.storeReview(result.review)
-            }
-        })
+//        viewModel.getPostReviewResultLiveData().observe(viewLifecycleOwner, { result ->
+//            if (result.review.id != "") {
+//                viewModel.storeReview(result.review)
+//            }
+//        })
 
         if (isNetworkAvailable()) {
             viewModel.getReviewsLiveData().observe(viewLifecycleOwner, { response ->
@@ -90,6 +99,8 @@ class ShowDetailsFragment : Fragment() {
                     initReviewButton(result.map {Review(it.id, it.comment, it.rating, it.showId, it.user)})
                 } else {
                     binding.reviewsEmptyState.isVisible = true
+                    initRecyclerView(emptyList())
+                    initReviewButton(emptyList())
                 }
             })
         }
@@ -107,11 +118,11 @@ class ShowDetailsFragment : Fragment() {
 
     private fun initReviewButton(reviews: List<Review>) {
         binding.reviewButton.setOnClickListener {
-            showReviewDialog(reviews)
+            showReviewDialog()
         }
     }
 
-    private fun showReviewDialog(reviews: List<Review>) {
+    private fun showReviewDialog() {
         val dialog = view?.let { BottomSheetDialog(it.context) }
         val dialogBinding = DialogWriteReviewBinding.inflate(layoutInflater)
         dialog?.setContentView(dialogBinding.root)
@@ -123,15 +134,26 @@ class ShowDetailsFragment : Fragment() {
                     "rev1",
                     dialogBinding.reviewComment.text.toString(),
                     dialogBinding.reviewRate.rating.toInt(),
-                    reviews[0].showId,
+                    prefs.getString("id", "")!!.toInt(),
                     User(prefs.getInt("user id", 0), prefs.getString("user email", "")!!, prefs.getString("user image", ""))))
             dialog?.dismiss()
 
-            viewModel.postReview(
-                dialogBinding.reviewRate.rating.toInt(),
-                dialogBinding.reviewComment.text.toString(),
-                reviews[0].showId
-            )
+            if (isNetworkAvailable()) {
+                viewModel.postReview(
+                    dialogBinding.reviewRate.rating.toInt(),
+                    dialogBinding.reviewComment.text.toString(),
+                    prefs.getString("id", "")!!.toInt()
+                )
+            } else {
+                viewModel.storeReview(Review(
+                    "",
+                    dialogBinding.reviewComment.text.toString(),
+                    dialogBinding.reviewRate.rating.toInt(),
+                    prefs.getString("id", "")!!.toInt(),
+                    User(prefs.getInt("user id", 0), prefs.getString("user email", "")!!, prefs.getString("user image", ""))))
+            }
+
+            binding.reviewsEmptyState.isVisible = false
         }
         dialog?.show()
     }
