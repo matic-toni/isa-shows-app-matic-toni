@@ -28,31 +28,35 @@ class SplashFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with (binding.showsText) {
-            scaleX = 0f
-            scaleY = 0f
-            animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .setDuration(1800)
-                .setInterpolator(BounceInterpolator())
-                .start()
-        }
-
         with (binding.triangle) {
             translationY = -500f
             animate()
                 .translationY(0f)
-                .setDuration(1800)
+                .setDuration(800)
                 .setInterpolator(BounceInterpolator())
                 .start()
         }
 
         val handler = Handler(Looper.getMainLooper())
+
+            with (binding.showsText) {
+                scaleX = 0f
+                scaleY = 0f
+                handler.postDelayed({
+                animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(750)
+                    .setInterpolator(BounceInterpolator())
+                    .start()
+                },
+                    900)
+        }
+
         handler.postDelayed({
             val action = SplashFragmentDirections.splashToLogin()
             findNavController().navigate(action)
         },
-        2000)
+        3000)
     }
 }
