@@ -7,13 +7,13 @@
     tools:context=".ShowsFragment">
 
     <ImageButton
-        android:id="@+id/logoutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/profilePictureButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="19dp"
-        android:src="@drawable/logout" />
+        android:layout_margin="16dp"
+        android:background="@drawable/ic_profile_placeholder" />
 
     <TextView
         android:layout_width="0dp"

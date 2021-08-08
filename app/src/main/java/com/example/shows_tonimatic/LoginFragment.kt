@@ -1,5 +1,7 @@
 package com.example.shows_tonimatic
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +19,7 @@ class LoginFragment : Fragment() {
 
     companion object {
         const val MIN_PASS_LENGTH = 6
+        const val REMEMBER_ME = "remember me"
     }
 
     private lateinit var binding : FragmentLoginBinding
@@ -30,6 +33,7 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("CommitPrefEdits")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -37,9 +41,27 @@ class LoginFragment : Fragment() {
         initEmailAndPassword(binding.passwordEdit)
 
         binding.loginButton.setOnClickListener {
-            val action = LoginFragmentDirections.actionLoginToShows(binding.emailEdit.editText?.text.toString().split("@").toTypedArray()[0])
-            findNavController().navigate(action)
+            val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+            if (prefs != null) {
+                with (prefs.edit()) {
+                    putBoolean(REMEMBER_ME, binding.rememberMe.isChecked)
+                    apply()
+                }
+            }
+            navigateToShows()
         }
+
+        val prefs = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
+        val clickedRememberMe = prefs.getBoolean( REMEMBER_ME,false)
+        if (clickedRememberMe) {
+            navigateToShows()
+        }
+
+    }
+
+    private fun navigateToShows() {
+        val action = LoginFragmentDirections.actionLoginToShows(binding.emailEdit.editText?.text.toString().split("@").toTypedArray()[0])
+        findNavController().navigate(action)
     }
 
     private fun initEmailAndPassword(inputLayout: TextInputLayout) {
@@ -49,6 +71,13 @@ class LoginFragment : Fragment() {
         inputLayout.editText?.addTextChangedListener {
             val email = emailEdit?.text.toString()
             val password = passwordEdit?.text.toString()
+            val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+            if (prefs != null) {
+                with (prefs.edit()) {
+                    putString("email", email)
+                    apply()
+                }
+            }
 
             if (email.isEmpty() || password.length < MIN_PASS_LENGTH) {
                 binding.loginButton.isEnabled = false
