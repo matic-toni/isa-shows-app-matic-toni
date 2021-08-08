@@ -20,9 +20,9 @@ class ShowsFragment : Fragment() {
 
     companion object {
         private val shows = listOf(
-            Show("the_office", "The Office", R.drawable.ic_the_office),
-            Show("stranger_things", "Stranger Things", R.drawable.ic_stranger_things),
-            Show("krv_nije_voda", "Krv Nije Voda", R.drawable.ic_krv_nije_voda)
+            Show("the_office", "The Office", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", R.drawable.ic_the_office),
+            Show("stranger_things", "Stranger Things", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", R.drawable.ic_stranger_things),
+            Show("krv_nije_voda", "Krv Nije Voda", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", R.drawable.ic_krv_nije_voda)
         )
     }
 

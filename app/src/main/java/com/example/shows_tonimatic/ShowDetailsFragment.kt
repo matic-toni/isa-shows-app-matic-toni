@@ -78,7 +78,7 @@ class ShowDetailsFragment : Fragment() {
         averageRating = String.format("%.2f", averageRating).toFloat()
 
         binding.showRating.rating = averageRating
-        binding.reviewsText.text = String.format(resources.getString(R.string.average_for_show), numOfRates, averageRating)
+        binding.reviewsText.text = String.format(resources.getString(R.string.average_for_show), numOfRates.toInt(), averageRating)
         return currentShowReviews
     }
 
