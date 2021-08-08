@@ -14,7 +14,6 @@ class ReviewsAdapter(
     private var items: List<Review>
 ) : RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder>() {
 
-
     inner class ReviewViewHolder(private val binding: ViewReviewItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Review) {
             binding.reviewName.text = item.user.email

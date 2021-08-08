@@ -4,13 +4,17 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.shows_tonimatic.db.ReviewEntity
+import com.example.shows_tonimatic.db.ShowEntity
+import com.example.shows_tonimatic.db.ShowsDatabase
 import com.example.shows_tonimatic.model.*
 import com.example.shows_tonimatic.networking.ApiModule
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.concurrent.Executors
 
-class ShowDetailsViewModel : ViewModel() {
+class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
 
     private val showLiveData: MutableLiveData<ShowResponse> by lazy {
         MutableLiveData<ShowResponse>()
@@ -62,11 +66,11 @@ class ShowDetailsViewModel : ViewModel() {
         })
     }
 
-    private val postReviewResultLiveData: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>()
+    private val postReviewResultLiveData: MutableLiveData<ReviewResponse> by lazy {
+        MutableLiveData<ReviewResponse>()
     }
 
-    fun getPostReviewResultLiveData(): LiveData<Boolean> {
+    fun getPostReviewResultLiveData(): LiveData<ReviewResponse> {
         return postReviewResultLiveData
     }
 
@@ -77,13 +81,43 @@ class ShowDetailsViewModel : ViewModel() {
                 call: Call<ReviewResponse>,
                 response: Response<ReviewResponse>
             ) {
-                postReviewResultLiveData.value = response.isSuccessful
+                postReviewResultLiveData.value = response.body()
             }
 
             override fun onFailure(call: Call<ReviewResponse>, t: Throwable) {
                 Log.d("Error:", t.message.toString())
-                postReviewResultLiveData.value = false
+                postReviewResultLiveData.value = ReviewResponse(Review("", "", 0,0, User(0, "", "")))
             }
         })
+    }
+
+    fun getOneShow(id: String): LiveData<ShowEntity> {
+        return database.showDao().getShow(id)
+    }
+
+    fun getOneReview(id: String): LiveData<ReviewEntity> {
+        return database.reviewDao().getReview(id)
+    }
+
+    fun getReviewsForShow(id: Int): LiveData<List<ReviewEntity>> {
+        return database.reviewDao().getReviews(id)
+    }
+
+    fun storeReviews(reviews: List<Review>) {
+        Executors.newSingleThreadExecutor().execute {
+            database.reviewDao().insertReviews(reviews.map {ReviewEntity(it.id, it.comment, it.rating, it.showId, it.user)})
+        }
+    }
+
+    fun storeReview(review: Review) {
+        Executors.newSingleThreadExecutor().execute {
+            database.reviewDao().insertReview(ReviewEntity(review.id, review.comment, review.rating, review.showId, review.user))
+        }
+    }
+
+    fun deleteReview(id: String) {
+        Executors.newSingleThreadExecutor().execute {
+            database.reviewDao().deleteRewiev(id)
+        }
     }
 }
