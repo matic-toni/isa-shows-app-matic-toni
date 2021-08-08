@@ -51,7 +51,7 @@ class LoginFragment : Fragment() {
             if (isLoginSuccessful) {
                 val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
                 if (prefs != null) {
-                    with (prefs.edit()) {
+                    with(prefs.edit()) {
                         putBoolean(REMEMBER_ME, binding.rememberMe.isChecked)
                         apply()
                     }
@@ -65,7 +65,7 @@ class LoginFragment : Fragment() {
 
         val prefs = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
 
-        val clickedRememberMe = prefs.getBoolean(REMEMBER_ME,false)
+        val clickedRememberMe = prefs.getBoolean(REMEMBER_ME, false)
         val registrationSuccessful = prefs.getBoolean(REGISTRATION_SUCCESSFUL, false)
 
         if (registrationSuccessful) {
@@ -79,6 +79,7 @@ class LoginFragment : Fragment() {
         if (clickedRememberMe) {
             navigateToShows()
         }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

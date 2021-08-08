@@ -71,8 +71,6 @@ class ShowsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initEmptyStateButton()
-
         viewModel.getMeResultLiveData().observe(viewLifecycleOwner, { response ->
             if (response.user.imageUrl != "") {
                 avatarUri = response.user.imageUrl?.toUri()
@@ -141,14 +139,6 @@ class ShowsFragment : Fragment() {
     private fun initProfilePictureButton() {
         binding.profilePictureButton.setOnClickListener {
             showProfileDialog()
-        }
-    }
-
-    private fun initEmptyStateButton() {
-        binding.emptyStateButton.setOnClickListener {
-            binding.showsRecycler.isVisible = !binding.showsRecycler.isVisible
-            binding.emptyStateImage.isVisible = !binding.showsRecycler.isVisible
-            binding.emptyStateText.isVisible = !binding.showsRecycler.isVisible
         }
     }
 
