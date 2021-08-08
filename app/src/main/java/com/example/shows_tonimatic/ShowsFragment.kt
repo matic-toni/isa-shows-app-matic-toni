@@ -2,7 +2,6 @@ package com.example.shows_tonimatic
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -54,20 +53,23 @@ class ShowsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentShowsBinding.inflate(layoutInflater)
-        val view = binding.root
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initLogoutButton()
+        initEmptyStateButton()
 
         viewModel.getShowsLiveData().observe(viewLifecycleOwner, {shows ->
             initRecycleView(shows)
         })
 
-
-
         viewModel.initShows()
 
         initEmptyStateButton()
         initProfilePictureButton()
-
-        return view
     }
 
     private fun initRecycleView(shows: List<Show>) {
@@ -87,15 +89,9 @@ class ShowsFragment : Fragment() {
 
     private fun initEmptyStateButton() {
         binding.emptyStateButton.setOnClickListener {
-            if(binding.showsRecycler.isVisible) {
-                binding.showsRecycler.isVisible = false
-                binding.emptyStateImage.isVisible = true
-                binding.emptyStateText.isVisible = true
-            } else {
-                binding.showsRecycler.isVisible = true
-                binding.emptyStateImage.isVisible = false
-                binding.emptyStateText.isVisible = false
-            }
+            binding.showsRecycler.isVisible = !binding.showsRecycler.isVisible
+            binding.emptyStateImage.isVisible = binding.showsRecycler.isVisible
+            binding.emptyStateText.isVisible = binding.showsRecycler.isVisible
         }
     }
 

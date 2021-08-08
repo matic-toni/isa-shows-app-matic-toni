@@ -29,7 +29,11 @@ class ShowDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentShowDetailsBinding.inflate(layoutInflater)
-        val view = binding.root
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.showName.text = args.showName
         binding.showDescription.text = args.showDescription
@@ -43,8 +47,6 @@ class ShowDetailsFragment : Fragment() {
         })
 
         initBackButton()
-
-        return view
     }
 
     private fun initRecyclerView(reviews: List<Review>) {
@@ -68,16 +70,16 @@ class ShowDetailsFragment : Fragment() {
             }
         }
 
-        var quotient = 0.0f
+        var averageRating = 0.0f
 
         if(numOfRates != 0.0f) {
-            quotient = sumOfRates / numOfRates
+            averageRating = sumOfRates / numOfRates
         }
 
-        val res = String.format("%.2f", quotient)
+        averageRating = String.format("%.2f", averageRating).toFloat()
 
-        binding.showRating.rating = quotient
-        binding.reviewsText.text = (numOfRates.toInt()).toString().plus(" REVIEWS, ").plus(res).plus(" AVERAGE")
+        binding.showRating.rating = averageRating
+        binding.reviewsText.text = String.format(resources.getString(R.string.average_for_show), numOfRates.toInt(), averageRating)
         return currentShowReviews
     }
 

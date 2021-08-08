@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -29,16 +30,16 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
-        val view = binding.root
-        initEmailAndPassword(binding.emailEdit)
-        initEmailAndPassword(binding.passwordEdit)
-
-        return view
+        return binding.root
     }
 
     @SuppressLint("CommitPrefEdits")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initEmailAndPassword(binding.emailEdit)
+        initEmailAndPassword(binding.passwordEdit)
+
         binding.loginButton.setOnClickListener {
             val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
             if (prefs != null) {
@@ -80,13 +81,13 @@ class LoginFragment : Fragment() {
 
             if (email.isEmpty() || password.length < MIN_PASS_LENGTH) {
                 binding.loginButton.isEnabled = false
-                binding.loginButton.setBackgroundColor(Color.parseColor("#BBBBBB"))
+                binding.loginButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.invalid_data))
                 binding.loginButton.setTextColor(Color.WHITE)
                 Log.d("Error:", "Wrong values!")
             } else {
                 binding.loginButton.isEnabled = true
                 binding.loginButton.setBackgroundColor(Color.WHITE)
-                binding.loginButton.setTextColor(Color.parseColor("#52368C"))
+                binding.loginButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.valid_data))
             }
         }
     }

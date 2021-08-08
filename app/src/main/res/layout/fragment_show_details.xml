@@ -6,12 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".ShowDetailsFragment">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        tools:layout_editor_absoluteX="-16dp"
-        tools:layout_editor_absoluteY="-66dp">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,27 +33,27 @@
                 android:id="@+id/showName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="64dp"
+                android:layout_marginHorizontal="24dp"
                 android:fontFamily="@font/roboto"
-                android:layout_marginStart="15dp"
                 android:textSize="28sp"
                 tools:text="The Office" />
 
             <ImageView
                 android:id="@+id/showImage"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="26dp"
-                android:layout_marginTop="15dp"
+                android:minHeight="200dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
                 tools:src="@drawable/ic_the_office" />
 
             <TextView
                 android:id="@+id/showDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginEnd="15dp"
                 android:fontFamily="@font/roboto"
                 android:lines="3"
                 android:textSize="17sp"
@@ -83,7 +85,6 @@
                 android:isIndicator="true"
                 android:numStars="5"
                 tools:rating="5"
-                android:progressTint="@color/purple_500"
                 android:stepSize="0.1" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -91,12 +92,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="15dp"
                 tools:listitem="@layout/view_review_item" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/reviewButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="44dp"
                 android:layout_margin="20dp"
                 android:layout_marginBottom="30dp"
                 android:fontFamily="@font/roboto"
@@ -106,6 +109,6 @@
                 android:text = "@string/write_a_review"/>
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
