@@ -59,7 +59,6 @@ class ShowsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initLogoutButton()
         initEmptyStateButton()
 
         viewModel.getShowsLiveData().observe(viewLifecycleOwner, {shows ->
@@ -67,8 +66,6 @@ class ShowsFragment : Fragment() {
         })
 
         viewModel.initShows()
-
-        initEmptyStateButton()
         initProfilePictureButton()
     }
 
@@ -90,8 +87,8 @@ class ShowsFragment : Fragment() {
     private fun initEmptyStateButton() {
         binding.emptyStateButton.setOnClickListener {
             binding.showsRecycler.isVisible = !binding.showsRecycler.isVisible
-            binding.emptyStateImage.isVisible = binding.showsRecycler.isVisible
-            binding.emptyStateText.isVisible = binding.showsRecycler.isVisible
+            binding.emptyStateImage.isVisible = !binding.showsRecycler.isVisible
+            binding.emptyStateText.isVisible = !binding.showsRecycler.isVisible
         }
     }
 
