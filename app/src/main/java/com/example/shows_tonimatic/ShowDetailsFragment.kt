@@ -37,7 +37,11 @@ class ShowDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentShowDetailsBinding.inflate(layoutInflater)
-        val view = binding.root
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
 
@@ -105,8 +109,6 @@ class ShowDetailsFragment : Fragment() {
         }
 
         initBackButton()
-
-        return view
     }
 
     private fun initRecyclerView(reviews: List<Review>) {

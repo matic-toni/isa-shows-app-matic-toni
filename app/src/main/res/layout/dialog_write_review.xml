@@ -37,15 +37,14 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/reviewComment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true" />
+            android:layout_height="match_parent" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/submitButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="44dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="24dp"
         android:layout_marginHorizontal="24dp"

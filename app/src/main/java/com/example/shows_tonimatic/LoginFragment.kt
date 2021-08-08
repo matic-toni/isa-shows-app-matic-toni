@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -35,17 +36,16 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
-        val view = binding.root
-        initRegisterButton()
-
-        initEmailAndPassword(binding.emailEdit)
-        initEmailAndPassword(binding.passwordEdit)
-
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initRegisterButton()
+
+        initEmailAndPassword(binding.emailEdit)
+        initEmailAndPassword(binding.passwordEdit)
 
         viewModel.getLoginResultLiveData().observe(this.viewLifecycleOwner) { isLoginSuccessful ->
             if (isLoginSuccessful) {
@@ -79,7 +79,6 @@ class LoginFragment : Fragment() {
         if (clickedRememberMe) {
             navigateToShows()
         }
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -114,7 +113,7 @@ class LoginFragment : Fragment() {
 
             if (email.isEmpty() || password.length < MIN_PASS_LENGTH) {
                 binding.loginButton.isEnabled = false
-                binding.loginButton.setBackgroundColor(Color.parseColor("#BBBBBB"))
+                binding.loginButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.invalid_data))
                 binding.loginButton.setTextColor(Color.WHITE)
                 Log.d("Error:", "Wrong values!")
             } else {

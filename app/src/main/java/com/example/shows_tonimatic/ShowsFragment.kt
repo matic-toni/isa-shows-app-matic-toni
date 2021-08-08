@@ -65,7 +65,13 @@ class ShowsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentShowsBinding.inflate(layoutInflater)
-        val view = binding.root
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initEmptyStateButton()
 
         viewModel.getMeResultLiveData().observe(viewLifecycleOwner, { response ->
             if (response.user.imageUrl != "") {
@@ -114,8 +120,6 @@ class ShowsFragment : Fragment() {
                 Toast.makeText(context, "Can't post image to server!", Toast.LENGTH_LONG).show()
             }
         })
-
-        return view
     }
 
     private fun initRecycleView(shows: List<Show>) {
@@ -137,6 +141,14 @@ class ShowsFragment : Fragment() {
     private fun initProfilePictureButton() {
         binding.profilePictureButton.setOnClickListener {
             showProfileDialog()
+        }
+    }
+
+    private fun initEmptyStateButton() {
+        binding.emptyStateButton.setOnClickListener {
+            binding.showsRecycler.isVisible = !binding.showsRecycler.isVisible
+            binding.emptyStateImage.isVisible = !binding.showsRecycler.isVisible
+            binding.emptyStateText.isVisible = !binding.showsRecycler.isVisible
         }
     }
 

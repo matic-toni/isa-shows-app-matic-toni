@@ -5,9 +5,13 @@
     android:layout_height="match_parent"
     tools:context=".ShowDetailsFragment">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:fillViewport="true">
 
         <LinearLayout
@@ -30,25 +34,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:fontFamily="@font/roboto"
-                android:layout_marginStart="15dp"
+                android:layout_marginHorizontal="24dp"
                 android:textSize="28sp"
                 tools:text="The Office" />
 
             <ImageView
                 android:id="@+id/showImage"
-                android:layout_width="wrap_content"
-                android:layout_height="500dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="200dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="32dp"
                 tools:src="@drawable/ic_the_office" />
 
             <TextView
                 android:id="@+id/showDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="20dp"
                 android:fontFamily="@font/roboto"
                 android:lines="3"
                 android:textSize="17sp"
@@ -87,6 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="15dp"
                 tools:listitem="@layout/view_review_item" />
 
             <TextView
@@ -103,12 +109,13 @@
                 android:id="@+id/reviewButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="44dp"
                 android:layout_margin="20dp"
                 android:layout_marginBottom="30dp"
                 style="@style/buttonStyle"
                 android:text = "@string/write_a_review"/>
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
