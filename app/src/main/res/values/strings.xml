@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Shows-ToniMatic</string>
+    <string name="average_for_show">%1$d REVIEWS, %2$.2f AVERAGE</string>
+    <string name="empty_state">empty state</string>
+    <string name="your_shows_are_not_showing_get_it">Your shows are not showing. Get it?</string>
     <string name="reviews">Reviews</string>
     <string name="write_a_review">Write a review</string>
     <string name="your_review">Your review…</string>

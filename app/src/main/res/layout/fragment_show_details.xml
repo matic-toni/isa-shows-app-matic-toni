@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ShowDetailsActivity">
+    tools:context=".ShowDetailsFragment">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
@@ -21,11 +21,19 @@
             android:orientation="vertical"
             android:stretchColumns="1">
 
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/back" />
+
             <TextView
                 android:id="@+id/showName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="72dp"
+                android:layout_marginTop="64dp"
                 android:layout_marginHorizontal="24dp"
                 android:fontFamily="@font/roboto"
                 android:textSize="28sp"
@@ -60,11 +68,20 @@
                 android:textSize="24sp"
                 android:text="@string/reviews" />
 
+            <TextView
+                android:id="@+id/reviewsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="3 reviews, 3.63 average"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="16dp" />
+
             <RatingBar
                 android:id="@+id/showRating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
                 android:isIndicator="true"
                 android:numStars="5"
                 tools:rating="5"
@@ -75,6 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="15dp"
                 tools:listitem="@layout/view_review_item" />
 
             <com.google.android.material.button.MaterialButton
