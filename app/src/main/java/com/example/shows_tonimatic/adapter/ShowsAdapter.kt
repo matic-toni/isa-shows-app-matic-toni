@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.shows_tonimatic.ShowCardView
 import com.example.shows_tonimatic.databinding.ViewShowItemBinding
 import com.example.shows_tonimatic.model.Show
 
@@ -14,24 +15,22 @@ class ShowsAdapter(
     private val onClickCallback: (Show) -> Unit
 ) : RecyclerView.Adapter<ShowsAdapter.ShowViewHolder>() {
 
-    inner class ShowViewHolder(private val binding: ViewShowItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ShowViewHolder(private val showCardView: ShowCardView) : RecyclerView.ViewHolder(showCardView.rootView) {
         fun bind(item: Show) {
-            binding.showName.text = item.title
-            binding.showDescription.text = item.description
+            showCardView.setShowTitle(item.title)
+            showCardView.setShowDescription(item.description!!)
 
-            Glide.with(itemView).load(Uri.parse(item.imageUrl)).centerCrop().into(binding.showImage)
+            showCardView.setShowImage(item.imageUrl)
 
-            // binding.showImage.setImageURI(Uri.parse(item.imageUrl))
-            binding.root.setOnClickListener {
-
+            showCardView.rootView.setOnClickListener {
                 onClickCallback(item)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowViewHolder {
-        val binding = ViewShowItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ShowViewHolder(binding)
+        val showCardView = ShowCardView(parent.context)
+        return ShowViewHolder(showCardView)
     }
 
     override fun onBindViewHolder(holder: ShowViewHolder, position: Int) {
