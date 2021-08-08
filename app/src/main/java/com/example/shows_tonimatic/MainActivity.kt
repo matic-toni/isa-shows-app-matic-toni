@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.shows_tonimatic.databinding.ActivityMainBinding
+import com.example.shows_tonimatic.networking.ApiModule
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,5 +16,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         supportActionBar?.hide()
+
+        val prefs = this.getPreferences(Context.MODE_PRIVATE)
+        ApiModule.initRetrofit(prefs)
     }
 }

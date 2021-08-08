@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="360dp"
-    android:padding="8dp"
-    android:clipToPadding="false">
+    tools:parentTag="android.widget.FrameLayout">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -27,7 +26,7 @@
                 tools:src="@drawable/ic_the_office" />
 
             <TextView
-                android:id="@+id/showName"
+                android:id="@+id/showTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
@@ -54,4 +53,4 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-</FrameLayout>
+</merge>
