@@ -24,7 +24,7 @@
         android:textSize="32sp"
         android:layout_marginTop="64dp"
         android:layout_marginStart="23dp"
-        android:text="Shows"/>
+        android:text="@string/shows"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/showsRecycler"
@@ -41,7 +41,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="64dp"
         android:layout_marginEnd="23dp"
-        android:text="empty state" />
+        android:text="@string/empty_state" />
 
     <ImageView
         android:id="@+id/emptyStateImage"
@@ -63,7 +63,7 @@
         app:layout_constraintTop_toBottomOf="@id/emptyStateImage"
         android:layout_marginTop="26dp"
         android:gravity="center"
-        android:text="Your shows are not showing. Get it?"
+        android:text="@string/your_shows_are_not_showing_get_it"
         android:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
