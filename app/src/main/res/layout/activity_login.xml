@@ -8,23 +8,23 @@
     android:background="@drawable/background">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="140dp"
+        android:layout_height="96dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:src="@drawable/topleft"/>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="264dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/topright"/>
 
     <ImageView
         android:id="@+id/triangle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="180dp"
@@ -33,7 +33,7 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/triangle"
         android:layout_marginTop="180dp"
@@ -41,8 +41,8 @@
         android:textSize="30sp"
         android:fontFamily="@font/roboto"
         android:textColor="@color/white"
-        android:gravity="center_horizontal"
-        android:text="Shows"/>
+        android:gravity="center"
+        android:text="@string/shows"/>
 
     <TextView
         android:id="@+id/loginText"
@@ -55,7 +55,7 @@
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="Login" />
+        android:text="@string/login" />
 
     <TextView
         android:id="@+id/instructionText"
@@ -69,7 +69,7 @@
         android:fontFamily="@font/roboto"
         android:textColor="@color/white"
         android:textSize="15sp"
-        android:text="In order to continue please log in"/>
+        android:text="@string/in_order_to_continue_please_log_in"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailEdit"
@@ -85,7 +85,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:boxStrokeColor="@color/selector_input_box"
         app:hintTextColor="@color/white"
-        android:hint="Email" >
+        android:hint="@string/email" >
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -112,7 +112,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:boxStrokeColor="@color/selector_input_box"
         app:hintTextColor="@color/white"
-        android:hint="Password" >
+        android:hint="@string/password" >
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -140,6 +140,6 @@
         android:textAllCaps="false"
         android:clickable="false"
         android:enabled="false"
-        android:text = "Login"/>
+        android:text = "@string/login"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

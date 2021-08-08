@@ -48,7 +48,7 @@ class ShowDetailsActivity : AppCompatActivity() {
         if (extras != null) {
             binding.showName.text = extras?.getString("NAME")
             binding.showDescription.text = extras?.getString("DESCRIPTION")
-            binding.showImage.setImageResource(extras!!.getInt("IMAGE")) // ne radi ?
+            binding.showImage.setImageResource(extras!!.getInt("IMAGE"))
         }
 
         initRecycleView()
@@ -64,17 +64,8 @@ class ShowDetailsActivity : AppCompatActivity() {
 
     private fun updateRating(): MutableList<Review> {
         val currentShowReviews = mutableListOf<Review>()
-        var sumOfRates = 0.0f
-        var numOfRates = 0.0f
 
-        reviews.forEach {
-            if (it.show_id == extras?.getString("ID")) {
-                currentShowReviews += it
-                sumOfRates += it.rate
-                numOfRates++
-            }
-        }
-        binding.showRating.rating = sumOfRates / numOfRates
+        binding.showRating.rating = reviews.map { review -> review.rate }.average().toFloat()
         return currentShowReviews
     }
 
@@ -90,10 +81,8 @@ class ShowDetailsActivity : AppCompatActivity() {
         dialog.setContentView(dialogBinding.root)
 
         dialogBinding.submitButton.setOnClickListener {
-            // reviews += Review("the_office", "ja", dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder)
             adapter?.addItem(Review("the_office", extras?.getString("USERNAME").toString(), dialogBinding.reviewComment.text.toString(), dialogBinding.reviewRate.rating.toInt(), R.drawable.ic_profile_placeholder))
             dialog.dismiss()
-            // updateRating()
         }
         dialog.show()
     }

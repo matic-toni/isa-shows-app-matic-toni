@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Shows-ToniMatic</string>
+    <string name="reviews">Reviews</string>
+    <string name="write_a_review">Write a review</string>
+    <string name="your_review">Your review…</string>
+    <string name="submit">Submit</string>
+    <string name="shows">Shows</string>
+    <string name="in_order_to_continue_please_log_in">In order to continue please log in</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
 </resources>
