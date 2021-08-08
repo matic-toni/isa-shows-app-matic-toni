@@ -1,5 +1,6 @@
 package com.example.shows_tonimatic
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.shows_tonimatic.databinding.ActivityMainBinding

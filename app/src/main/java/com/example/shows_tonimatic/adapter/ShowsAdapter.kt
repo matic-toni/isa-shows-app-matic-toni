@@ -1,4 +1,4 @@
-package com.example.shows_tonimatic
+package com.example.shows_tonimatic.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
