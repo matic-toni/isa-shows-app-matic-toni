@@ -14,7 +14,13 @@
         <action
             android:id="@+id/splash_to_login"
             app:destination="@id/loginFragment"
-            app:popUpTo="@id/loginFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/splash_to_shows"
+            app:destination="@+id/showsFragment"
+            app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
 
     </fragment>
@@ -27,7 +33,8 @@
         <action
             android:id="@+id/action_login_to_shows"
             app:destination="@id/showsFragment"
-            app:popUpTo="@id/showsFragment" />
+            app:popUpTo="@id/showsFragment"
+            app:popUpToInclusive="true"/>
 
         <action
             android:id="@+id/action_login_to_register"

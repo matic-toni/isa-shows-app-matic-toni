@@ -13,10 +13,10 @@ class ShowCardView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ): FrameLayout(context, attrs, defStyleAttr){
-    private var binding: ViewShowItemBinding
+    private var binding: ViewShowItemBinding =
+        ViewShowItemBinding.inflate(LayoutInflater.from(context), this)
 
     init {
-        binding = ViewShowItemBinding.inflate(LayoutInflater.from(context), this)
         val pixelPadding = context.resources.getDimensionPixelSize(R.dimen.show_padding)
         setPadding(pixelPadding, pixelPadding, pixelPadding, pixelPadding)
 

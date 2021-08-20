@@ -1,5 +1,6 @@
 package com.example.shows_tonimatic
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -21,42 +22,52 @@ class SplashFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSplashBinding.inflate(layoutInflater, container, false)
-        val view = binding.root
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with (binding.triangle) {
-            translationY = -500f
-            animate()
-                .translationY(0f)
-                .setDuration(800)
-                .setInterpolator(BounceInterpolator())
-                .start()
-        }
-
         val handler = Handler(Looper.getMainLooper())
+
+        handler.postDelayed({
+            with (binding.triangle) {
+                translationY = -800f
+                animate()
+                    .translationY(0f)
+                    .setDuration(800)
+                    .setInterpolator(BounceInterpolator())
+                    .start()
+            }
 
             with (binding.showsText) {
                 scaleX = 0f
                 scaleY = 0f
                 handler.postDelayed({
-                animate()
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setDuration(750)
-                    .setInterpolator(BounceInterpolator())
-                    .start()
+                    animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(750)
+                        .setInterpolator(BounceInterpolator())
+                        .start()
                 },
                     900)
-        }
+            }
+        },
+            100)
+
+        val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+        val rememberMe = prefs?.getBoolean(LoginFragment.REMEMBER_ME, false)!!
 
         handler.postDelayed({
-            val action = SplashFragmentDirections.splashToLogin()
-            findNavController().navigate(action)
+            if (rememberMe) {
+                val action = SplashFragmentDirections.splashToShows()
+                findNavController().navigate(action)
+            } else {
+                val action = SplashFragmentDirections.splashToLogin()
+                findNavController().navigate(action)
+            }
         },
-        3000)
+            3000)
     }
 }
