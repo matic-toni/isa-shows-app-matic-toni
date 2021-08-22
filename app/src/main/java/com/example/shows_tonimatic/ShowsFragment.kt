@@ -176,7 +176,7 @@ class ShowsFragment : Fragment() {
             }
 
             builder.setPositiveButton("YES",dialogClickListener)
-            builder.setNegativeButton("NO",dialogClickListener)
+            builder.setNegativeButton("CANCEL",dialogClickListener)
 
             val dialogAlert = builder.create()
             dialogAlert.show()

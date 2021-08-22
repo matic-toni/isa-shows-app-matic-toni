@@ -16,7 +16,7 @@
 
     <ImageView
         android:layout_width="200dp"
-        android:layout_height="264dp"
+        android:layout_height="272dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/top_right"/>

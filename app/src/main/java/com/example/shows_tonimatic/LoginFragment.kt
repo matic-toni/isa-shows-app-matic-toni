@@ -24,7 +24,6 @@ class LoginFragment : Fragment() {
     companion object {
         const val MIN_PASS_LENGTH = 6
         const val REMEMBER_ME = "remember me"
-        const val REGISTRATION_SUCCESSFUL = "Registratsplaion successful!"
         const val LOGIN = "Login"
         val emailRegex: Pattern = compile(
             "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
@@ -57,12 +56,17 @@ class LoginFragment : Fragment() {
         initEmailAndPassword(binding.emailEdit)
         initEmailAndPassword(binding.passwordEdit)
 
-        val prefs = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
-        val registrationSuccessful = prefs.getBoolean(REGISTRATION_SUCCESSFUL, false)
+        val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+        val registrationSuccessful = prefs?.getBoolean(RegisterFragment.REGISTRATION_SUCCESSFUL, false)
 
-        if (registrationSuccessful) {
-            binding.loginText.text = REGISTRATION_SUCCESSFUL
+        if (registrationSuccessful == true) {
+            binding.loginText.text = RegisterFragment.REGISTRATION_SUCCESSFUL
             binding.registerButton.isVisible = false
+
+            with(prefs.edit()) {
+                putBoolean(RegisterFragment.REGISTRATION_SUCCESSFUL, false)
+                apply()
+            }
         } else {
             binding.loginText.text = LOGIN
             binding.registerButton.isVisible = true
@@ -74,7 +78,7 @@ class LoginFragment : Fragment() {
         val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
         if (prefs != null) {
             with (prefs.edit()) {
-                putBoolean(REGISTRATION_SUCCESSFUL, false)
+                putBoolean(RegisterFragment.REGISTRATION_SUCCESSFUL, false)
                 apply()
             }
         }

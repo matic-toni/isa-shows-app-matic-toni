@@ -33,7 +33,7 @@
         <action
             android:id="@+id/action_login_to_shows"
             app:destination="@id/showsFragment"
-            app:popUpTo="@id/showsFragment"
+            app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true"/>
 
         <action
@@ -56,7 +56,7 @@
         <action
             android:id="@+id/action_shows_to_login"
             app:destination="@id/loginFragment"
-            app:popUpTo="@id/loginFragment"
+            app:popUpTo="@id/showsFragment"
             app:popUpToInclusive="true" />
 
     </fragment>
@@ -72,11 +72,6 @@
         android:id="@+id/registerFragment"
         android:name="com.example.shows_tonimatic.RegisterFragment"
         tools:layout="@layout/fragment_register">
-
-        <action
-            android:id="@+id/action_register_to_login"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/loginFragment" />
 
     </fragment>
 
