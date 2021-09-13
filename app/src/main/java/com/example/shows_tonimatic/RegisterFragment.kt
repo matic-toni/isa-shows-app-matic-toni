@@ -8,11 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.shows_tonimatic.databinding.FragmentLoginBinding
 import com.example.shows_tonimatic.databinding.FragmentRegisterBinding
 import com.example.shows_tonimatic.viewmodel.RegisterViewModel
 import com.google.android.material.textfield.TextInputLayout
@@ -33,15 +33,16 @@ class RegisterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentRegisterBinding.inflate(layoutInflater, container, false)
-        val view = binding.root
-        initEmailAndPassword(binding.emailEdit)
-        initEmailAndPassword(binding.passwordEdit)
-        initEmailAndPassword(binding.repeatPasswordEdit)
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initEmailAndPassword(binding.emailEdit)
+        initEmailAndPassword(binding.passwordEdit)
+        initEmailAndPassword(binding.repeatPasswordEdit)
+
         viewModel.getRegistrationResultLiveData().observe(this.viewLifecycleOwner) {
             isRegisterSuccessful ->
                 if (isRegisterSuccessful) {
@@ -52,8 +53,7 @@ class RegisterFragment : Fragment() {
                             apply()
                         }
                     }
-                    val action = RegisterFragmentDirections.actionRegisterToLogin()
-                    findNavController().navigate(action)
+                    findNavController().navigateUp()
                 } else {
                     Toast.makeText(context, "Registration fail!", Toast.LENGTH_SHORT).show()
                 }
@@ -76,15 +76,15 @@ class RegisterFragment : Fragment() {
             val password = passwordEdit?.text.toString()
             val repeatedPassword = repeatPasswordEdit?.text.toString()
 
-            if (email.isEmpty() || password.length < MIN_PASS_LENGTH || password != repeatedPassword) {
+            if (email.isEmpty() || password.length < MIN_PASS_LENGTH || password != repeatedPassword || !LoginFragment.emailRegex.matcher(email).matches()) {
                 binding.registerButton.isEnabled = false
-                binding.registerButton.setBackgroundColor(Color.parseColor("#BBBBBB"))
+                binding.registerButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.invalid_data))
                 binding.registerButton.setTextColor(Color.WHITE)
                 Log.d("Error:", "Wrong values!")
             } else {
                 binding.registerButton.isEnabled = true
                 binding.registerButton.setBackgroundColor(Color.WHITE)
-                binding.registerButton.setTextColor(Color.parseColor("#52368C"))
+                binding.registerButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.valid_data))
             }
         }
     }

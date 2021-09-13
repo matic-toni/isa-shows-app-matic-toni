@@ -16,7 +16,7 @@
 
     <ImageView
         android:layout_width="200dp"
-        android:layout_height="264dp"
+        android:layout_height="272dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/top_right"/>
@@ -78,8 +78,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/instructionText"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="26dp"
-        android:layout_marginEnd="26dp"
+        android:layout_marginHorizontal="26dp"
         android:layout_marginTop="15dp"
         android:textColorHint="@color/white"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -102,8 +101,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/emailEdit"
-        android:layout_marginStart="26dp"
-        android:layout_marginEnd="26dp"
+        android:layout_marginHorizontal="26dp"
         android:layout_marginTop="15dp"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/white"
@@ -122,13 +120,26 @@
             android:layout_centerVertical="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/incorrectData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/passwordEdit"
+        android:layout_marginHorizontal="26dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/purple_200"
+        android:fontFamily="@font/roboto"
+        android:visibility="invisible"
+        android:text="@string/incorrect_email_or_password" />
+
     <CheckBox
         android:id="@+id/rememberMe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/passwordEdit"
+        app:layout_constraintTop_toBottomOf="@id/incorrectData"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="8dp"
         android:layout_marginStart="26dp"
         android:textColor="@color/white"
         android:text="@string/remember_me" />

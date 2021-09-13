@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -17,14 +16,24 @@ import androidx.navigation.fragment.findNavController
 import com.example.shows_tonimatic.databinding.FragmentLoginBinding
 import com.example.shows_tonimatic.viewmodel.LoginViewModel
 import com.google.android.material.textfield.TextInputLayout
+import java.util.regex.Pattern
+import java.util.regex.Pattern.compile
 
 class LoginFragment : Fragment() {
 
     companion object {
         const val MIN_PASS_LENGTH = 6
         const val REMEMBER_ME = "remember me"
-        const val REGISTRATION_SUCCESSFUL = "Registration successful!"
         const val LOGIN = "Login"
+        val emailRegex: Pattern = compile(
+            "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+                    "\\@" +
+                    "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+                    "(" +
+                    "\\." +
+                    "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+                    ")+"
+        )
     }
 
     private lateinit var binding : FragmentLoginBinding
@@ -47,37 +56,20 @@ class LoginFragment : Fragment() {
         initEmailAndPassword(binding.emailEdit)
         initEmailAndPassword(binding.passwordEdit)
 
-        viewModel.getLoginResultLiveData().observe(this.viewLifecycleOwner) { isLoginSuccessful ->
-            if (isLoginSuccessful) {
-                val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
-                if (prefs != null) {
-                    with(prefs.edit()) {
-                        putBoolean(REMEMBER_ME, binding.rememberMe.isChecked)
-                        apply()
-                    }
-                }
+        val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+        val registrationSuccessful = prefs?.getBoolean(RegisterFragment.REGISTRATION_SUCCESSFUL, false)
 
-                navigateToShows()
-            } else {
-                Toast.makeText(context, "Login failed!", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        val prefs = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
-
-        val clickedRememberMe = prefs.getBoolean(REMEMBER_ME, false)
-        val registrationSuccessful = prefs.getBoolean(REGISTRATION_SUCCESSFUL, false)
-
-        if (registrationSuccessful) {
-            binding.loginText.text = REGISTRATION_SUCCESSFUL
+        if (registrationSuccessful == true) {
+            binding.loginText.text = RegisterFragment.REGISTRATION_SUCCESSFUL
             binding.registerButton.isVisible = false
+
+            with(prefs.edit()) {
+                putBoolean(RegisterFragment.REGISTRATION_SUCCESSFUL, false)
+                apply()
+            }
         } else {
             binding.loginText.text = LOGIN
             binding.registerButton.isVisible = true
-        }
-
-        if (clickedRememberMe) {
-            navigateToShows()
         }
     }
 
@@ -86,7 +78,7 @@ class LoginFragment : Fragment() {
         val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
         if (prefs != null) {
             with (prefs.edit()) {
-                putBoolean(REGISTRATION_SUCCESSFUL, false)
+                putBoolean(RegisterFragment.REGISTRATION_SUCCESSFUL, false)
                 apply()
             }
         }
@@ -112,7 +104,7 @@ class LoginFragment : Fragment() {
                 }
             }
 
-            if (email.isEmpty() || password.length < MIN_PASS_LENGTH) {
+            if (email.isEmpty() || password.length < MIN_PASS_LENGTH || !emailRegex.matcher(email).matches()) {
                 binding.loginButton.isEnabled = false
                 binding.loginButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.invalid_data))
                 binding.loginButton.setTextColor(Color.WHITE)
@@ -120,15 +112,29 @@ class LoginFragment : Fragment() {
             } else {
                 binding.loginButton.isEnabled = true
                 binding.loginButton.setBackgroundColor(Color.WHITE)
-                binding.loginButton.setTextColor(Color.parseColor("#52368C"))
+                binding.loginButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.valid_data))
 
                 binding.loginButton.setOnClickListener {
+
+                    viewModel.getLoginResultLiveData().observe(this.viewLifecycleOwner) { isLoginSuccessful ->
+                        if (isLoginSuccessful) {
+                            if (prefs != null) {
+                                with(prefs.edit()) {
+                                    putBoolean(REMEMBER_ME, binding.rememberMe.isChecked)
+                                    apply()
+                                }
+                            }
+                            navigateToShows()
+                        } else {
+                            binding.incorrectData.isVisible = true
+                        }
+                    }
+
                     viewModel.login(
                         binding.emailEdit.editText?.text.toString(),
                         binding.passwordEdit.editText?.text.toString()
                     )
                 }
-
             }
         }
     }
@@ -139,5 +145,4 @@ class LoginFragment : Fragment() {
             findNavController().navigate(action)
         }
     }
-
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Shows-ToniMatic</string>
+    <string name="app_name">Shows</string>
     <string name="average_for_show">%1$d REVIEWS, %2$.2f AVERAGE</string>
     <string name="write_a_review">Write a review</string>
     <string name="your_review">Your review…</string>
@@ -16,8 +16,8 @@
     <string name="change_profile_photo">Change profile photo</string>
     <string name="logout">Logout</string>
     <string name="register">Register</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="repeat_password">Repeat password</string>
     <string name="no_reviews_available">No reviews available!</string>
+    <string name="incorrect_email_or_password">Incorrect email or password!</string>
 </resources>

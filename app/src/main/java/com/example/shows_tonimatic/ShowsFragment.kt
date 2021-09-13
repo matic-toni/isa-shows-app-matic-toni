@@ -45,17 +45,14 @@ class ShowsFragment : Fragment() {
     })
 
     private var avatarUri: Uri? = null
-    private lateinit var file: File
+    private var file: File? = null
     private var userEmail: String? = null
 
     private val cameraContract = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
         if (isSuccess) {
             FileUtil.getImageFile(context)?.let {
-                Toast.makeText(context, "Picture changed", Toast.LENGTH_SHORT).show()
                 uploadImage()
             }
-        } else {
-            Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -108,7 +105,6 @@ class ShowsFragment : Fragment() {
         }
 
         initProfilePictureButton()
-
 
         viewModel.getPostImageResultLiveData().observe(viewLifecycleOwner, { response ->
             if (response.user.imageUrl != "") {
@@ -180,7 +176,7 @@ class ShowsFragment : Fragment() {
             }
 
             builder.setPositiveButton("YES",dialogClickListener)
-            builder.setNegativeButton("NO",dialogClickListener)
+            builder.setNegativeButton("CANCEL",dialogClickListener)
 
             val dialogAlert = builder.create()
             dialogAlert.show()
@@ -195,15 +191,18 @@ class ShowsFragment : Fragment() {
 
 
     private fun openCamera() {
-        file = FileUtil.createImageFile(requireContext())!!
+        file = FileUtil.getImageFile(context)
+        if (file == null) {
+            file = FileUtil.createImageFile(requireContext())
+        }
 
-        avatarUri = FileProvider.getUriForFile(requireContext(), context?.applicationContext?.packageName.toString() + ".fileprovider", file)
+        avatarUri = FileProvider.getUriForFile(requireContext(), context?.applicationContext?.packageName.toString() + ".fileprovider", file!!)
         cameraContract.launch(avatarUri)
     }
 
     private fun uploadImage() {
-        val requestFile: RequestBody = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val body: MultipartBody.Part = MultipartBody.Part.createFormData("image", file.name.trim(), requestFile)
+        val requestFile: RequestBody = file!!.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val body: MultipartBody.Part = MultipartBody.Part.createFormData("image", file!!.name.trim(), requestFile)
 
         viewModel.postImage(body)
     }
