@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:clipToPadding="false">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/reviewProfilePicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:minWidth="48dp"
+        tools:src="@drawable/ic_profile_placeholder"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"/>
+
+    <TextView
+        android:id="@+id/reviewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Ime prezime"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:id="@+id/reviewRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="3"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="25dp"
+        android:layout_gravity="end"/>
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="1"
+        android:rating="1"
+        android:layout_gravity="end"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="10dp" />
+
+    <TextView
+        android:id="@+id/reviewComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Komentar"
+        android:layout_marginTop="80dp" />
+
+</FrameLayout>

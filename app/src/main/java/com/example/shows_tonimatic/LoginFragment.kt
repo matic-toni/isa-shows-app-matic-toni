@@ -1,0 +1,143 @@
+package com.example.shows_tonimatic
+
+import android.content.Context
+import android.graphics.Color
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.example.shows_tonimatic.databinding.FragmentLoginBinding
+import com.example.shows_tonimatic.viewmodel.LoginViewModel
+import com.google.android.material.textfield.TextInputLayout
+
+class LoginFragment : Fragment() {
+
+    companion object {
+        const val MIN_PASS_LENGTH = 6
+        const val REMEMBER_ME = "remember me"
+        const val REGISTRATION_SUCCESSFUL = "Registration successful!"
+        const val LOGIN = "Login"
+    }
+
+    private lateinit var binding : FragmentLoginBinding
+    private val viewModel: LoginViewModel by viewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initRegisterButton()
+
+        initEmailAndPassword(binding.emailEdit)
+        initEmailAndPassword(binding.passwordEdit)
+
+        viewModel.getLoginResultLiveData().observe(this.viewLifecycleOwner) { isLoginSuccessful ->
+            if (isLoginSuccessful) {
+                val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+                if (prefs != null) {
+                    with(prefs.edit()) {
+                        putBoolean(REMEMBER_ME, binding.rememberMe.isChecked)
+                        apply()
+                    }
+                }
+
+                navigateToShows()
+            } else {
+                Toast.makeText(context, "Login failed!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        val prefs = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
+
+        val clickedRememberMe = prefs.getBoolean(REMEMBER_ME, false)
+        val registrationSuccessful = prefs.getBoolean(REGISTRATION_SUCCESSFUL, false)
+
+        if (registrationSuccessful) {
+            binding.loginText.text = REGISTRATION_SUCCESSFUL
+            binding.registerButton.isVisible = false
+        } else {
+            binding.loginText.text = LOGIN
+            binding.registerButton.isVisible = true
+        }
+
+        if (clickedRememberMe) {
+            navigateToShows()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+        if (prefs != null) {
+            with (prefs.edit()) {
+                putBoolean(REGISTRATION_SUCCESSFUL, false)
+                apply()
+            }
+        }
+    }
+
+    private fun navigateToShows() {
+        val action = LoginFragmentDirections.actionLoginToShows()
+        findNavController().navigate(action)
+    }
+
+    private fun initEmailAndPassword(inputLayout: TextInputLayout) {
+        val emailEdit = binding.emailEdit.editText
+        val passwordEdit = binding.passwordEdit.editText
+
+        inputLayout.editText?.addTextChangedListener {
+            val email = emailEdit?.text.toString()
+            val password = passwordEdit?.text.toString()
+            val prefs = activity?.getPreferences(Context.MODE_PRIVATE)
+            if (prefs != null) {
+                with (prefs.edit()) {
+                    putString("email", email)
+                    apply()
+                }
+            }
+
+            if (email.isEmpty() || password.length < MIN_PASS_LENGTH) {
+                binding.loginButton.isEnabled = false
+                binding.loginButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.invalid_data))
+                binding.loginButton.setTextColor(Color.WHITE)
+                Log.d("Error:", "Wrong values!")
+            } else {
+                binding.loginButton.isEnabled = true
+                binding.loginButton.setBackgroundColor(Color.WHITE)
+                binding.loginButton.setTextColor(Color.parseColor("#52368C"))
+
+                binding.loginButton.setOnClickListener {
+                    viewModel.login(
+                        binding.emailEdit.editText?.text.toString(),
+                        binding.passwordEdit.editText?.text.toString()
+                    )
+                }
+
+            }
+        }
+    }
+
+    private fun initRegisterButton() {
+        binding.registerButton.setOnClickListener {
+            val action = LoginFragmentDirections.actionLoginToRegister()
+            findNavController().navigate(action)
+        }
+    }
+
+}

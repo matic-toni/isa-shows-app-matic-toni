@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="360dp"
+    tools:parentTag="android.widget.FrameLayout">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:rippleColor="@color/black">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="344dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/showImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="200dp"
+                android:scaleType="fitCenter"
+                tools:src="@drawable/ic_the_office" />
+
+            <TextView
+                android:id="@+id/showTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:layout_marginHorizontal="16dp"
+                android:textStyle="bold"
+                tools:text="Superman"/>
+
+            <TextView
+                android:id="@+id/showDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:padding="12dp"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                android:layout_marginHorizontal="16dp"
+                android:textStyle="bold"
+                android:lines="3"
+                tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</merge>
